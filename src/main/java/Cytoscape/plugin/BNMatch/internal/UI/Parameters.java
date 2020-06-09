@@ -4,34 +4,29 @@ import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 
 import java.io.File;
+import java.util.Vector;
 
 public class Parameters {
 
 
+    private Vector<Double> params;
     public CyNetwork indexNetwork;
     public CyNetwork targetNetwork;
-    public CyColumn indexIDColumn;
-    public CyColumn targetIDColumn;
     public File indexSeqFile;
     public File targetSeqFile;
-
-    public Parameters(CyNetwork indexNetwork,
-                      CyNetwork targetNetwork,
-                      CyColumn indexIDColumn,
-                      CyColumn targetIDColumn) {
-        this.indexNetwork = indexNetwork;
-        this.targetNetwork = targetNetwork;
-        this.indexIDColumn = indexIDColumn;
-        this.targetIDColumn = targetIDColumn;
-    }
+    public File simMatFile;
 
     public Parameters(CyNetwork indexNetwork,
                       CyNetwork targetNetwork,
                       File indexSeqFile,
-                      File targetSeqFile) {
+                      File targetSeqFile,
+                      File simMatFile,
+                      Vector<Double> params) {
         this.indexNetwork = indexNetwork;
         this.targetNetwork = targetNetwork;
         this.indexSeqFile = indexSeqFile;
         this.targetSeqFile = targetSeqFile;
+        this.simMatFile = simMatFile;
+        this.params = params;
     }
 }

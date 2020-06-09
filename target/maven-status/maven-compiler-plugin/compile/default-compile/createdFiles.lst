@@ -1,4 +1,5 @@
 Cytoscape\plugin\BNMatch\internal\CyActivator$1.class
+Cytoscape\plugin\BNMatch\internal\util\Convert.class
 Cytoscape\plugin\BNMatch\internal\Canvas\CanvasUtils$1.class
 Cytoscape\plugin\BNMatch\internal\UI\Parameters.class
 Cytoscape\plugin\BNMatch\internal\Canvas\ColourShape.class

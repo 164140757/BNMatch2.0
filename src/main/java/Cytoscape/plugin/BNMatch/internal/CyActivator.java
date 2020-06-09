@@ -18,7 +18,6 @@ import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.work.TaskManager;
-import org.cytoscape.work.TaskMonitor;
 import org.osgi.framework.BundleContext;
 
 import java.awt.event.ActionEvent;

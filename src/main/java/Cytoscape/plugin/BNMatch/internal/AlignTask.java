@@ -8,19 +8,13 @@
  */
 package Cytoscape.plugin.BNMatch.internal;
 
-import Algorithms.Graph.Network.AdjList;
-import Algorithms.Graph.Network.Node;
 import Cytoscape.plugin.BNMatch.internal.UI.Parameters;
-import org.cytoscape.model.*;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNetworkFactory;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static Cytoscape.plugin.BNMatch.internal.util.Convert.convert;
 
 public class AlignTask extends AbstractTask {
 
@@ -50,15 +44,20 @@ public class AlignTask extends AbstractTask {
 		if(params.indexNetwork == null || params.targetNetwork == null){
 			throw new RuntimeException("Both index-network and target-network should be selected.");
 		}
+
 		// Create an empty network
 		CyNetwork myNet = networkFactory.createNetwork();
 		myNet.getRow(myNet).set(CyNetwork.NAME,
 				      namingUtil.getSuggestedNetworkTitle("Result"));
-		// HGA
-		CyNetwork indexNetwork = params.indexNetwork;
-		CyNetwork targetNetwork = params.targetNetwork;
-		AdjList indexAdjList = convert(indexNetwork);
-		AdjList targetAdjList = convert(targetNetwork);
+		// Create a network for output
+		CyNetwork result = networkFactory.createNetwork();
+		result.getRow(result).set(CyNetwork.NAME,
+				namingUtil.getSuggestedNetworkTitle("BNMatch alignment result"));
+//		// HGA
+//		CyNetwork indexNetwork = params.indexNetwork;
+//		CyNetwork targetNetwork = params.targetNetwork;
+//		AdjList indexAdjList = convert(indexNetwork);
+//		AdjList targetAdjList = convert(targetNetwork);
 
 
 	}

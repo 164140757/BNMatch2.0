@@ -5,21 +5,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <bundle.symbolicName>Cytoscape.plugin.BNMatch</bundle.symbolicName>
-        <bundle.namespace>Cytoscape.plugin.BNMatch</bundle.namespace>
+        <bundle.symbolicName>Cytoscape.plugin</bundle.symbolicName>
+        <bundle.namespace>Cytoscape.plugin.BNMatch.internal</bundle.namespace>
         <project.version>1.0</project.version>
         <!--dependencies version-->
-        <cytoscape.api.version>3.8.0</cytoscape.api.version>
-        <osgi.api.version>5.0.0</osgi.api.version>
+        <cytoscape.api.version>3.7.0</cytoscape.api.version>
+        <osgi.api.version>4.2.0</osgi.api.version>
         <maven-bundle-plugin.version>4.2.1</maven-bundle-plugin.version>
         <miglayout.version>5.2</miglayout.version>
         <swingx.version>1.6.1</swingx.version>
+        <jgrapht.core.version>1.4.0</jgrapht.core.version>
     </properties>
     <groupId>Cytoscape.plugin.BNMatch</groupId>
     <artifactId>BNMatch</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0</version>
-
+    <version>1.0</version>
+    <description>
+        BNMatch provide reliable and optimal mapping between protein and protein networks concerning about protein sequences and topological similarity.
+    </description>
     <name>BNMatch</name>
 
 
@@ -52,13 +55,14 @@
                     <instructions>
                         <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Export-Package>${bundle.namespace}</Export-Package>
-                        <Private-Package>${bundle.namespace}.internal.*</Private-Package>
-                        <Bundle-Activator>${bundle.namespace}.internal.CyActivator</Bundle-Activator>
-                        <!--embedded third party apps-->
-                        <Embed-Dependency>*;scope=!provided|test;groupId=!org.cytoscape</Embed-Dependency>
+                        <Export-Package>!${bundle.namespace}.*</Export-Package>
+                        <Private-Package>${bundle.namespace}.*</Private-Package>
+                        <Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
+                        <Embed-Dependency>
+                            miglayout-swing;inline=true,
+                            miglayout-core;inline=true
+                        </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Import-Package>*;resolution:=optional</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -94,17 +98,27 @@
     </repositories>
 
     <dependencies>
-        <!-- project dependencies (must be marked as optional!) -->
         <!-- HGA algorithm -->
         <dependency>
             <groupId>BHT</groupId>
             <artifactId>Algorithms</artifactId>
             <version>1.0</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <!--network data structure base-->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <scope>compile</scope>
+            <version>${jgrapht.core.version}</version>
+            <optional>true</optional>
         </dependency>
         <!--java swing layout-->
         <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-swing</artifactId>
+            <scope>compile</scope>
             <version>${miglayout.version}</version>
             <optional>true</optional>
         </dependency>

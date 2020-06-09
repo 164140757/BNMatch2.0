@@ -1,6 +1,6 @@
 package Cytoscape.plugin.BNMatch.internal.UI;
 
-import Algorithms.Graph.Network.AdjList;
+import Cytoscape.plugin.BNMatch.internal.AlignTask;
 import UI.TreeTable;
 import net.miginfocom.swing.MigLayout;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -11,8 +11,8 @@ import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
-import org.cytoscape.work.TaskMonitor;
 import org.jgrapht.alg.util.Pair;
 
 import javax.swing.*;
@@ -23,13 +23,9 @@ import java.io.File;
 import java.util.List;
 import java.util.*;
 
-import static Cytoscape.plugin.BNMatch.internal.util.Convert.convert;
-
 
 // Define a CytoPanel class
 public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, NetworkAboutToBeDestroyedListener {
-    private static final int DEFAULT_NONZEROS = 5;
-    private static final int DEFAULT_BIOACCOUNT = 50;
     private static final int COMBOMAXLENGTH = 100;
 
     private final CyNetworkManager networkManager;
@@ -40,26 +36,32 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     // data structures
     // UI components
     private JPanel rootPanel;
-//    private JPanel modeCardPanel;
+    //    private JPanel modeCardPanel;
     private JComboBox<CyNetwork> indexNetworks;
     private JComboBox<CyNetwork> targetNetworks;
 
     private JButton targetLocalBrowseButton;
     private JButton indexLocalBrowseButton;
+    private JButton simMatrixBrowseButton;
     private JButton analyseButton;
+    private JButton closeButton;
 
-
-
+    private JLabel hVal;
     private JLabel targetLocalLabel;
     private JLabel indexLocalLabel;
     private JFileChooser targetLocalFileChooser;
+    private JFileChooser simMatrixFileChooser;
     private JFileChooser indexLocalFileChooser;
-//    private JRadioButton sequencesLocalButton;
+    //    private JRadioButton sequencesLocalButton;
 //    private JRadioButton sequencesRemoteButton;
 //    private CardLayout cardsForModes;
     // parameters for HGA
     private int non_zeros_every_row_MAX; // this is the h value to shape the HA matrix by selecting rows having at least h non zero elements
     private boolean isindexQuery;
+    private JLabel simMatrixLabel;
+    private JSlider hValSlider;
+    private JTextField tolerance;
+    private JTextField seqFactor;
 
 
     public ControlPanel(
@@ -82,12 +84,19 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
 
     private void addListeners() {
-//        // targetNetworks listener
-//        targetNetworks.addActionListener(actionEvent -> {
-//            CyNetwork selectedNetwork = targetNetworks.getItemAt(targetNetworks.getSelectedIndex());
-//            non_zeros_every_row_MAX = selectedNetwork.getNodeCount();
-//            // update the list
-//            // clean the list
+        // targetNetworks listener
+        targetNetworks.addActionListener(actionEvent -> {
+            CyNetwork selectedNetwork = targetNetworks.getItemAt(targetNetworks.getSelectedIndex());
+            non_zeros_every_row_MAX = selectedNetwork.getNodeCount();
+            // dramatically change the component
+            hValSlider.setValue(non_zeros_every_row_MAX / 2);
+            hValSlider.setMaximum(non_zeros_every_row_MAX);
+            hVal.setText(Integer.toString(non_zeros_every_row_MAX / 2));
+            hValSlider.revalidate();
+            hVal.revalidate();
+
+            // update the list
+            // clean the list
 //            remoteTargetTableIDColumns.removeAllItems();
 //            CyTable remoteTargetTable = selectedNetwork.getDefaultNodeTable();
 //            for (CyColumn column : remoteTargetTable.getColumns()) {
@@ -99,7 +108,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 //            }
 //            // dramatically change the component
 //            remoteTargetTableIDColumns.revalidate();
-//        });
+        });
 //
 //        // indexNetworks listener
 //        indexNetworks.addActionListener(actionEvent -> {
@@ -148,13 +157,29 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
                 targetLocalLabel.setText(targetLocalLabel.getText() + selectedFile.getName());
             }
         });
+        simMatrixBrowseButton.addActionListener(actionEvent -> {
+            int status = simMatrixFileChooser.showOpenDialog(null);
+            if (status == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = simMatrixFileChooser.getSelectedFile();
+                simMatrixLabel.setText(simMatrixLabel.getText() + selectedFile.getName());
+            }
+        });
+        hValSlider.addChangeListener(actionEvent -> {
+            int val = hValSlider.getValue();
+            hVal.setText(Integer.toString(val));
+        });
+
         // analyseButton settings
         analyseButton.addActionListener(actionEvent -> {
             Parameters params = getParameters();
 
             // get indexNetwork as 0, targetNetwork as 1
             //TODO add new params
-//            taskManager.execute(new TaskIterator(new AlignTask(networkFactory, networkManager, params,namingUtil)));
+            taskManager.execute(new TaskIterator(new AlignTask(networkFactory, networkManager, params, namingUtil)));
+        });
+        // close
+        closeButton.addActionListener(actionEvent -> {
+            System.exit(0);
         });
 
     }
@@ -273,6 +298,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         CyColumn targetIDColumn;
         File indexSeqFile;
         File targetSeqFile;
+        File simMatrixFile;
 //        // remote mode
 //        if (sequencesRemoteButton.isSelected()) {
 //            // ID columns
@@ -285,7 +311,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         // sequence files
         indexSeqFile = indexLocalFileChooser.getSelectedFile();
         targetSeqFile = targetLocalFileChooser.getSelectedFile();
-        return new Parameters(indexNetwork, targetNetwork, indexSeqFile, targetSeqFile);
+        simMatrixFile = simMatrixFileChooser.getSelectedFile();
+        double hVal = hValSlider.getValue();
+        double tol = Double.parseDouble(tolerance.getText());
+        double sFac = Double.parseDouble(seqFactor.getText());
+        Vector<Double> vector = new Vector<>(Arrays.asList(hVal, tol, sFac));
+        return new Parameters(indexNetwork, targetNetwork, indexSeqFile, targetSeqFile, simMatrixFile, vector);
 
     }
 
@@ -299,8 +330,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         setMax(indexNetworks);
         setMax(targetNetworks);
 
-
-
         for (CyNetwork network :
                 networkManager.getNetworkSet()) {
             indexNetworks.addItem(network);
@@ -313,15 +342,19 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             // initialize parameters
             non_zeros_every_row_MAX = targetNetworks.getItemAt(0).getNodeCount();
         } else {
-            non_zeros_every_row_MAX = 10;
+            non_zeros_every_row_MAX = 0;
         }
         // graphs panel components initialization
         JPanel graphsPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
         graphsPanel.setBorder(new TitledBorder("Networks"));
 
         // sequences panel components initialization
-        JPanel sequencesPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
-        sequencesPanel.setBorder(new TitledBorder("Protein sequences"));
+        JPanel sequencesInfoPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
+        sequencesInfoPanel.setBorder(new TitledBorder("Protein sequences and similarity matrix"));
+
+        //parameters panel
+        JPanel paramsPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
+        paramsPanel.setBorder(new TitledBorder("Change the parameters input for HGA"));
 //        sequencesLocalButton = new JRadioButton("Local");
 //        sequencesRemoteButton = new JRadioButton("Remote", true);
 //        indexQueryButton = new JButton("Query");
@@ -336,10 +369,28 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         indexLocalFileChooser = new JFileChooser();
         targetLocalBrowseButton = new JButton("Browse");
         indexLocalBrowseButton = new JButton("Browse");
+
+        simMatrixLabel = new JLabel("Similarity matrix for E-value from BLASTP:");
+        simMatrixBrowseButton = new JButton("Browse");
+        simMatrixFileChooser = new JFileChooser();
+
+        // params
+        JLabel hValLabel = new JLabel("Non-zero items per row for H-matrix:");
+        hVal = new JLabel(Integer.toString(non_zeros_every_row_MAX / 2));
+        hValSlider = new JSlider();
+        hValSlider.setMaximum(non_zeros_every_row_MAX);
+        hValSlider.setValue(non_zeros_every_row_MAX / 2);
+        JLabel toleranceLabel = new JLabel("Tolerance for iteration:");
+        tolerance = new JTextField("0.01");
+        JLabel seqFactorLabel = new JLabel("weight account for sequence similarity:");
+        seqFactor = new JTextField("0.5");
+
+
 //        indexQueryButton = new JButton("index query");
 //        targetQueryButton = new JButton("target query");
         // analysis button
         analyseButton = new JButton("Analyse");
+        closeButton = new JButton("Close");
         // fileChoosers settings
         setFileChoosers();
         // different visualize formats when different buttons have been clicked
@@ -350,7 +401,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 //        JPanel buttonPanel = new JPanel(new MigLayout("wrap 2"));
 //        buttonPanel.add(sequencesLocalButton);
 //        buttonPanel.add(sequencesRemoteButton);
-
 
         // add to graphsPanel
         graphsPanel.add(new JLabel("Index network:"));
@@ -368,37 +418,57 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 //        localMode.add(indexLocalBrowseButton, "wrap");
 //        localMode.add(targetLocalLabel, "wrap");
 //        localMode.add(targetLocalBrowseButton, "wrap");
-        sequencesPanel.add(indexLocalLabel, "wrap");
-        sequencesPanel.add(indexLocalBrowseButton, "wrap");
-        sequencesPanel.add(targetLocalLabel, "wrap");
-        sequencesPanel.add(targetLocalBrowseButton, "wrap");
+        sequencesInfoPanel.add(indexLocalLabel, "wrap");
+        sequencesInfoPanel.add(indexLocalBrowseButton, "wrap");
+        sequencesInfoPanel.add(targetLocalLabel, "wrap");
+        sequencesInfoPanel.add(targetLocalBrowseButton, "wrap");
+        sequencesInfoPanel.add(simMatrixLabel, "wrap");
+        sequencesInfoPanel.add(simMatrixBrowseButton, "wrap");
 //        sequencesPanel.add(modeCardPanel, "wrap,grow");
 
+        // paramsPanel
+        paramsPanel.add(hValLabel);
+        paramsPanel.add(hVal);
+        paramsPanel.add(hValSlider, "wrap");
+        paramsPanel.add(toleranceLabel);
+        paramsPanel.add(tolerance);
+        paramsPanel.add(seqFactorLabel);
+        paramsPanel.add(seqFactor);
         // rootPanel
         rootPanel = new JPanel(new MigLayout("wrap 1", "[grow]", "[grow]"));
         rootPanel.add(graphsPanel, "grow");
-        rootPanel.add(sequencesPanel, "grow");
+        rootPanel.add(sequencesInfoPanel, "grow");
+        rootPanel.add(paramsPanel, "grow");
         rootPanel.add(analyseButton, "center");
 
 
     }
 
     private void setFileChoosers() {
+        FileNameExtensionFilter faaFileFilter = new FileNameExtensionFilter("" +
+                "FASTA format: nucleotide sequences or amino acid (protein) sequences",
+                "fasta", "fna", "ffn", "faa", "frn");
+        FileNameExtensionFilter txtFileFilter = new FileNameExtensionFilter("TEXT FIle format",
+                "txt");
         // fileFormat settings
-        targetLocalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("" +
-                "FASTA format: nucleotide sequences or amino acid (protein) sequences",
-                "fasta", "fna", "ffn", "faa", "frn"));
-        targetLocalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("TEXT FIle format",
-                "txt"));
-        indexLocalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("" +
-                "FASTA format: nucleotide sequences or amino acid (protein) sequences",
-                "fasta", "fna", "ffn", "faa", "frn"));
-        indexLocalFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("TEXT FIle format",
-                ".txt"));
+        targetLocalFileChooser.addChoosableFileFilter(faaFileFilter);
+        targetLocalFileChooser.addChoosableFileFilter(txtFileFilter);
+        targetLocalFileChooser.setFileFilter(faaFileFilter);
+
+        indexLocalFileChooser.addChoosableFileFilter(faaFileFilter);
+        indexLocalFileChooser.addChoosableFileFilter(txtFileFilter);
+        indexLocalFileChooser.setFileFilter(faaFileFilter);
+
+
+        simMatrixFileChooser.addChoosableFileFilter(faaFileFilter);
+        simMatrixFileChooser.addChoosableFileFilter(txtFileFilter);
+        simMatrixFileChooser.setFileFilter(faaFileFilter);
+
+
         // init dictionary
         targetLocalFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         indexLocalFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-
+        simMatrixFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
     }
 
     private void setMax(JComboBox<?> combo) {
