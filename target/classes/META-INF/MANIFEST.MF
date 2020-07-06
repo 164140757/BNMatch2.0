@@ -1,27 +1,19 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1591711351314
+Bnd-LastModified: 1593769969144
 Build-Jdk: 14
 Built-By: Haotian Bai
-Bundle-Activator: Cytoscape.plugin.BNMatch.internal.CyActivator
-Bundle-Description: BNMatch provide reliable and optimal mapping between
-  protein and protein networks concerning about protein sequences and to
- pological similarity.
+Bundle-Activator: Cytoscape.plugin.PNMatcher.internal.CyActivator
+Bundle-Description: PNMatcher provides reliable and optimal mapping betw
+ een PPI networks concerning about protein sequences and topological sim
+ ilarity.
 Bundle-ManifestVersion: 2
-Bundle-Name: BNMatch
+Bundle-Name: PNMatcher
 Bundle-SymbolicName: Cytoscape.plugin
 Bundle-Version: 1.0
 Created-By: Apache Maven Bundle Plugin
 Embed-Dependency: miglayout-swing;inline=true,miglayout-core;inline=true
 Embed-Transitive: true
-Import-Package: Algorithms.Graph.Network;resolution:=optional,UI;resolut
- ion:=optional,javax.swing,javax.swing.border,javax.swing.event,javax.sw
- ing.filechooser,javax.swing.text,org.cytoscape.application.swing;versio
- n="[3.7,4)",org.cytoscape.model;version="[3.7,4)",org.cytoscape.model.e
- vents;version="[3.7,4)",org.cytoscape.service.util;version="[3.7,4)",or
- g.cytoscape.session;version="[3.7,4)",org.cytoscape.view.layout;version
- ="[3.7,4)",org.cytoscape.view.presentation.property;version="[3.7,4)",o
- rg.cytoscape.view.presentation.property.values;version="[3.7,4)",org.cy
- toscape.work;version="[3.7,4)",org.jgrapht.alg.util;version="[1.4,2)";r
- esolution:=optional,org.osgi.framework;version="[1.5,2)"
+Import-Package: Cytoscape.plugin.PNMatcher.internal,javax.swing,javax.sw
+ ing.border,javax.swing.text
 Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
 Tool: Bnd-4.2.0.201903051501

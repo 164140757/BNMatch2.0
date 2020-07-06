@@ -6,7 +6,7 @@
 
     <properties>
         <bundle.symbolicName>Cytoscape.plugin</bundle.symbolicName>
-        <bundle.namespace>Cytoscape.plugin.BNMatch.internal</bundle.namespace>
+        <bundle.namespace>Cytoscape.plugin.PNMatcher.internal</bundle.namespace>
         <project.version>1.0</project.version>
         <!--dependencies version-->
         <cytoscape.api.version>3.7.0</cytoscape.api.version>
@@ -16,14 +16,14 @@
         <swingx.version>1.6.1</swingx.version>
         <jgrapht.core.version>1.4.0</jgrapht.core.version>
     </properties>
-    <groupId>Cytoscape.plugin.BNMatch</groupId>
-    <artifactId>BNMatch</artifactId>
+    <groupId>Cytoscape.plugin.PNMatcher</groupId>
+    <artifactId>PNMatcher</artifactId>
     <packaging>bundle</packaging>
     <version>1.0</version>
     <description>
-        BNMatch provide reliable and optimal mapping between protein and protein networks concerning about protein sequences and topological similarity.
+        PNMatcher provides reliable and optimal mapping between PPI networks concerning about protein sequences and topological similarity.
     </description>
-    <name>BNMatch</name>
+    <name>PNMatcher</name>
 
 
     <build>

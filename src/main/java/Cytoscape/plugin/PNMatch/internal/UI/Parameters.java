@@ -1,6 +1,5 @@
-package Cytoscape.plugin.BNMatch.internal.UI;
+package Cytoscape.plugin.PNMatch.internal.UI;
 
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 
 import java.io.File;
@@ -9,24 +8,25 @@ import java.util.Vector;
 public class Parameters {
 
 
-    private Vector<Double> params;
+    public final boolean force;
+    public Vector<Double> params;
     public CyNetwork indexNetwork;
     public CyNetwork targetNetwork;
-    public File indexSeqFile;
-    public File targetSeqFile;
     public File simMatFile;
 
+    /**
+     * @param params hVal, tolerance, bio-factor
+     * @param force force mapping for the same nodes
+     */
     public Parameters(CyNetwork indexNetwork,
                       CyNetwork targetNetwork,
-                      File indexSeqFile,
-                      File targetSeqFile,
                       File simMatFile,
-                      Vector<Double> params) {
+                      Vector<Double> params,
+                      boolean force) {
         this.indexNetwork = indexNetwork;
         this.targetNetwork = targetNetwork;
-        this.indexSeqFile = indexSeqFile;
-        this.targetSeqFile = targetSeqFile;
         this.simMatFile = simMatFile;
         this.params = params;
+        this.force = force;
     }
 }

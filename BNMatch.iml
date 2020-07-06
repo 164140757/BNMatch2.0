@@ -2,13 +2,15 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="BNMatch-1.0.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="Cytoscape.plugin.BNMatch.internal.CyActivator" bundleSymbolicName="Cytoscape.plugin" bundleVersion="1.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="PNMatcher-1.0.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="Cytoscape.plugin.PNMatcher.internal.CyActivator" bundleSymbolicName="Cytoscape.plugin" bundleVersion="1.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
-          <property key="Bundle-Description" value="BNMatch provide reliable and optimal mapping between protein and protein networks concerning about protein sequences and topological similarity." />
-          <property key="Export-Package" value="!Cytoscape.plugin.BNMatch.internal.*" />
-          <property key="Private-Package" value="Cytoscape.plugin.BNMatch.internal.*" />
-          <property key="Import-Package" value="miglayout-swing;inline=true" />
-          <property key="Bundle-Name" value="BNMatch" />
+          <property key="Bundle-Description" value="PNMatcher provides reliable and optimal mapping between PPI networks concerning about protein sequences and topological similarity." />
+          <property key="Export-Package" value="!Cytoscape.plugin.PNMatcher.internal.*" />
+          <property key="Private-Package" value="Cytoscape.plugin.PNMatcher.internal.*" />
+          <property key="Embed-Dependency" value="miglayout-swing;inline=true,miglayout-core;inline=true" />
+          <property key="Embed-Transitive" value="true" />
+          <property key="Bundle-Name" value="PNMatcher" />
+          <property key="Include-Resource" value="@$MAVEN_REPOSITORY$/com/miglayout/miglayout-swing/5.2/miglayout-swing-5.2.jar,@$MAVEN_REPOSITORY$/com/miglayout/miglayout-core/5.2/miglayout-core-5.2.jar" />
         </additionalProperties>
         <additionalJARContents />
       </configuration>

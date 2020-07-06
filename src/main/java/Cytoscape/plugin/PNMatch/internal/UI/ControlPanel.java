@@ -1,6 +1,7 @@
-package Cytoscape.plugin.BNMatch.internal.UI;
+package Cytoscape.plugin.PNMatch.internal.UI;
 
-import Cytoscape.plugin.BNMatch.internal.AlignTask;
+import Cytoscape.plugin.PNMatch.internal.Tasks.DisplayTask;
+import Cytoscape.plugin.PNMatch.internal.Tasks.HGATask;
 import UI.TreeTable;
 import net.miginfocom.swing.MigLayout;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -10,9 +11,12 @@ import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
+import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
+import org.cytoscape.work.undo.UndoSupport;
 import org.jgrapht.alg.util.Pair;
 
 import javax.swing.*;
@@ -32,6 +36,9 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     private final CyNetworkFactory networkFactory;
     private final CyNetworkNaming namingUtil;
     private final TaskManager taskManager;
+    private final CyServiceRegistrar csr;
+    private final UndoSupport uds;
+    private final CyNetworkViewManager nvm;
 
     // data structures
     // UI components
@@ -40,18 +47,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     private JComboBox<CyNetwork> indexNetworks;
     private JComboBox<CyNetwork> targetNetworks;
 
-    private JButton targetLocalBrowseButton;
-    private JButton indexLocalBrowseButton;
     private JButton simMatrixBrowseButton;
     private JButton analyseButton;
     private JButton closeButton;
 
     private JLabel hVal;
-    private JLabel targetLocalLabel;
-    private JLabel indexLocalLabel;
-    private JFileChooser targetLocalFileChooser;
     private JFileChooser simMatrixFileChooser;
-    private JFileChooser indexLocalFileChooser;
     //    private JRadioButton sequencesLocalButton;
 //    private JRadioButton sequencesRemoteButton;
 //    private CardLayout cardsForModes;
@@ -62,19 +63,26 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     private JSlider hValSlider;
     private JTextField tolerance;
     private JTextField seqFactor;
+    private JCheckBox forcedCheck;
 
 
     public ControlPanel(
             CyNetworkManager networkManager,
             CyNetworkFactory networkFactory,
             TaskManager taskManager,
-            CyNetworkNaming namingUtil
-    ) {
+            CyNetworkNaming namingUtil,
+            CyServiceRegistrar csr,
+            UndoSupport uds,
+            CyNetworkViewManager nvm
+            ) {
         // params
         this.networkManager = networkManager;
         this.networkFactory = networkFactory;
         this.taskManager = taskManager;
         this.namingUtil = namingUtil;
+        this.csr = csr;
+        this.uds = uds;
+        this.nvm = nvm;
         // initialize UI settings
         init();
         // add listeners for buttons
@@ -142,21 +150,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 //        targetQueryButton.addActionListener(actionEvent -> {
 //            startQueryFrame();
 //        });
-        // localModeBrowseButtons
-        indexLocalBrowseButton.addActionListener(actionEvent -> {
-            int status = indexLocalFileChooser.showOpenDialog(null);
-            if (status == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = indexLocalFileChooser.getSelectedFile();
-                indexLocalLabel.setText(indexLocalLabel.getText() + selectedFile.getName());
-            }
-        });
-        targetLocalBrowseButton.addActionListener(actionEvent -> {
-            int status = targetLocalFileChooser.showOpenDialog(null);
-            if (status == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = targetLocalFileChooser.getSelectedFile();
-                targetLocalLabel.setText(targetLocalLabel.getText() + selectedFile.getName());
-            }
-        });
+        // FileBrowseButtons
         simMatrixBrowseButton.addActionListener(actionEvent -> {
             int status = simMatrixFileChooser.showOpenDialog(null);
             if (status == JFileChooser.APPROVE_OPTION) {
@@ -172,15 +166,14 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         // analyseButton settings
         analyseButton.addActionListener(actionEvent -> {
             Parameters params = getParameters();
-
-            // get indexNetwork as 0, targetNetwork as 1
-            //TODO add new params
-            taskManager.execute(new TaskIterator(new AlignTask(networkFactory, networkManager, params, namingUtil)));
+            TaskIterator it = new TaskIterator();
+            HGATask hgaTask = new HGATask(networkFactory,params);
+            DisplayTask displayTask = new DisplayTask(csr,uds,namingUtil,networkFactory,nvm,hgaTask);
+            it.append(hgaTask);
+            taskManager.execute(it);
         });
         // close
-        closeButton.addActionListener(actionEvent -> {
-            System.exit(0);
-        });
+        closeButton.addActionListener(actionEvent -> System.exit(0));
 
     }
 
@@ -309,14 +302,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         // local mode
 
         // sequence files
-        indexSeqFile = indexLocalFileChooser.getSelectedFile();
-        targetSeqFile = targetLocalFileChooser.getSelectedFile();
         simMatrixFile = simMatrixFileChooser.getSelectedFile();
         double hVal = hValSlider.getValue();
         double tol = Double.parseDouble(tolerance.getText());
-        double sFac = Double.parseDouble(seqFactor.getText());
-        Vector<Double> vector = new Vector<>(Arrays.asList(hVal, tol, sFac));
-        return new Parameters(indexNetwork, targetNetwork, indexSeqFile, targetSeqFile, simMatrixFile, vector);
+        double bfac = Double.parseDouble(seqFactor.getText());
+        Vector<Double> vector = new Vector<>(Arrays.asList(hVal, tol, bfac));
+        return new Parameters(indexNetwork, targetNetwork, simMatrixFile, vector,forcedCheck.isSelected());
 
     }
 
@@ -349,8 +340,8 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         graphsPanel.setBorder(new TitledBorder("Networks"));
 
         // sequences panel components initialization
-        JPanel sequencesInfoPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
-        sequencesInfoPanel.setBorder(new TitledBorder("Protein sequences and similarity matrix"));
+        JPanel fileInfoPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
+        fileInfoPanel.setBorder(new TitledBorder("Protein sequences and similarity matrix"));
 
         //parameters panel
         JPanel paramsPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
@@ -363,18 +354,15 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 //        modeCardPanel = new JPanel(cardsForModes);
 //        JPanel remoteMode = new JPanel(new MigLayout("wrap 2"));
 //        JPanel localMode = new JPanel(new MigLayout("wrap 2"));
-        targetLocalLabel = new JLabel("Target network sequence file: ");
-        indexLocalLabel = new JLabel("Index network sequence file: ");
-        targetLocalFileChooser = new JFileChooser();
-        indexLocalFileChooser = new JFileChooser();
-        targetLocalBrowseButton = new JButton("Browse");
-        indexLocalBrowseButton = new JButton("Browse");
+
 
         simMatrixLabel = new JLabel("Similarity matrix for E-value from BLASTP:");
         simMatrixBrowseButton = new JButton("Browse");
         simMatrixFileChooser = new JFileChooser();
 
         // params
+        forcedCheck = new JCheckBox("Map same nodes in a prefuse.util.force way");
+        forcedCheck.setSelected(true);
         JLabel hValLabel = new JLabel("Non-zero items per row for H-matrix:");
         hVal = new JLabel(Integer.toString(non_zeros_every_row_MAX / 2));
         hValSlider = new JSlider();
@@ -418,15 +406,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 //        localMode.add(indexLocalBrowseButton, "wrap");
 //        localMode.add(targetLocalLabel, "wrap");
 //        localMode.add(targetLocalBrowseButton, "wrap");
-        sequencesInfoPanel.add(indexLocalLabel, "wrap");
-        sequencesInfoPanel.add(indexLocalBrowseButton, "wrap");
-        sequencesInfoPanel.add(targetLocalLabel, "wrap");
-        sequencesInfoPanel.add(targetLocalBrowseButton, "wrap");
-        sequencesInfoPanel.add(simMatrixLabel, "wrap");
-        sequencesInfoPanel.add(simMatrixBrowseButton, "wrap");
+        fileInfoPanel.add(simMatrixLabel, "wrap");
+        fileInfoPanel.add(simMatrixBrowseButton, "wrap");
 //        sequencesPanel.add(modeCardPanel, "wrap,grow");
 
         // paramsPanel
+        paramsPanel.add(forcedCheck,"wrap");
         paramsPanel.add(hValLabel);
         paramsPanel.add(hVal);
         paramsPanel.add(hValSlider, "wrap");
@@ -437,7 +422,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         // rootPanel
         rootPanel = new JPanel(new MigLayout("wrap 1", "[grow]", "[grow]"));
         rootPanel.add(graphsPanel, "grow");
-        rootPanel.add(sequencesInfoPanel, "grow");
+        rootPanel.add(fileInfoPanel, "grow");
         rootPanel.add(paramsPanel, "grow");
         rootPanel.add(analyseButton, "center");
 
@@ -451,14 +436,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         FileNameExtensionFilter txtFileFilter = new FileNameExtensionFilter("TEXT FIle format",
                 "txt");
         // fileFormat settings
-        targetLocalFileChooser.addChoosableFileFilter(faaFileFilter);
-        targetLocalFileChooser.addChoosableFileFilter(txtFileFilter);
-        targetLocalFileChooser.setFileFilter(faaFileFilter);
-
-        indexLocalFileChooser.addChoosableFileFilter(faaFileFilter);
-        indexLocalFileChooser.addChoosableFileFilter(txtFileFilter);
-        indexLocalFileChooser.setFileFilter(faaFileFilter);
-
 
         simMatrixFileChooser.addChoosableFileFilter(faaFileFilter);
         simMatrixFileChooser.addChoosableFileFilter(txtFileFilter);
@@ -466,8 +443,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
 
         // init dictionary
-        targetLocalFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        indexLocalFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         simMatrixFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
     }
 
