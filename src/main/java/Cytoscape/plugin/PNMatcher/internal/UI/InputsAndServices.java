@@ -1,12 +1,16 @@
-package Cytoscape.plugin.PNMatch.internal.UI;
+package Cytoscape.plugin.PNMatcher.internal.UI;
 
+import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
+import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.TaskManager;
+import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.undo.UndoSupport;
 
 import java.io.File;
@@ -32,6 +36,9 @@ public final class InputsAndServices {
     public static TaskManager taskManager;
     public static UndoSupport undoSupport;
     public static CyNetworkViewManager networkViewManager;
+    public static CyNetworkViewFactory networkViewFactory;
+    public static CyLayoutAlgorithmManager layoutAlgorithmManager;
+    public static CyEventHelper eventHelper;
 
     public static void initServices() {
         if(registrar!=null){
@@ -41,6 +48,9 @@ public final class InputsAndServices {
             taskManager = registrar.getService(TaskManager.class);
             undoSupport = registrar.getService(UndoSupport.class);
             networkViewManager = registrar.getService(CyNetworkViewManager.class);
+            networkViewFactory = registrar.getService(CyNetworkViewFactory.class);
+            layoutAlgorithmManager = registrar.getService(CyLayoutAlgorithmManager.class);
+            eventHelper = registrar.getService(CyEventHelper.class);
         }
     }
 }

@@ -6,16 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="BNMatch" />
+        <module name="PNMatcher" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="BNMatch" target="1.8" />
+      <module name="PNMatcher" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="BNMatch" options="-Xmaxwarns 10000 -Xmaxerrs 10000" />
+      <module name="PNMatcher" options="-Xmaxwarns 10000 -Xmaxerrs 10000" />
     </option>
   </component>
 </project>

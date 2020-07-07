@@ -1,6 +1,10 @@
-package Cytoscape.plugin.PNMatch.internal.Tasks;
+package Cytoscape.plugin.PNMatcher.internal.Tasks;
+
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public final class AlignmentTaskData {
     //HGA
@@ -15,5 +19,9 @@ public final class AlignmentTaskData {
     // Total score
     public static double score;
     // mapping result for index vs target networks
-    public static HashMap<String, String> mapping;
+    public static HashMap<CyNode, CyNode> mapping;
+    // result to display
+    public static CyNetwork combinedNet;
+    // left nodes in the target network without being mapped
+    public static HashSet<CyNode> leftTgtNodes;
 }

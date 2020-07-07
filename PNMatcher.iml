@@ -2,15 +2,18 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="PNMatcher-1.0.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="Cytoscape.plugin.PNMatch.internal.CyActivator" bundleSymbolicName="Cytoscape.plugin" bundleVersion="1.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="PNMatcher-1.0.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="Cytoscape.plugin.PNMatcher.internal.CyActivator" bundleSymbolicName="Cytoscape.plugin" bundleVersion="1.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
-          <property key="Bundle-Description" value="PNMatcher provides reliable and optimal mapping between PPI networks concerning about protein sequences and topological similarity." />
+          <property key="Bundle-Description" value="PNMatcher provides reliable and optimal mapping between PPI networks concerning about protein sequences andtopological similarity." />
           <property key="Export-Package" value="!Cytoscape.plugin.PNMatcher.internal.*" />
           <property key="Private-Package" value="Cytoscape.plugin.PNMatcher.internal.*" />
-          <property key="Embed-Dependency" value="miglayout-swing;inline=true,miglayout-core;inline=true" />
+          <property key="Import-Package" value="!tech.tablesaw.*,!org.swinglabs.swingx,!org.jdesktop.swingx.*,*;resolution:=optional" />
+          <property key="Embed-Dependency" value="*;scope=!provided|test;groupId=!org.cytoscape" />
           <property key="Embed-Transitive" value="true" />
           <property key="Bundle-Name" value="PNMatcher" />
-          <property key="Include-Resource" value="@$MAVEN_REPOSITORY$/com/miglayout/miglayout-swing/5.2/miglayout-swing-5.2.jar,@$MAVEN_REPOSITORY$/com/miglayout/miglayout-core/5.2/miglayout-core-5.2.jar" />
+          <property key="Bundle-ClassPath" value=".,jheaps-0.11.jar,miglayout-core-5.2.jar,jgrapht-core-1.4.0.jar,Algorithms-1.0.jar,jblas-1.2.4.jar,miglayout-swing-5.2.jar" />
+          <property key="Include-Resource" value="jheaps-0.11.jar=$MAVEN_REPOSITORY$/org/jheaps/jheaps/0.11/jheaps-0.11.jar,miglayout-core-5.2.jar=$MAVEN_REPOSITORY$/com/miglayout/miglayout-core/5.2/miglayout-core-5.2.jar,jgrapht-core-1.4.0.jar=$MAVEN_REPOSITORY$/org/jgrapht/jgrapht-core/1.4.0/jgrapht-core-1.4.0.jar,Algorithms-1.0.jar=$MAVEN_REPOSITORY$/BHT/Algorithms/1.0/Algorithms-1.0.jar,jblas-1.2.4.jar=$MAVEN_REPOSITORY$/org/jblas/jblas/1.2.4/jblas-1.2.4.jar,miglayout-swing-5.2.jar=$MAVEN_REPOSITORY$/com/miglayout/miglayout-swing/5.2/miglayout-swing-5.2.jar" />
+          <property key="Embedded-Artifacts" value="jheaps-0.11.jar;g=&quot;org.jheaps&quot;;a=&quot;jheaps&quot;;v=&quot;0.11&quot;,miglayout-core-5.2.jar;g=&quot;com.miglayout&quot;;a=&quot;miglayout-core&quot;;v=&quot;5.2&quot;,jgrapht-core-1.4.0.jar;g=&quot;org.jgrapht&quot;;a=&quot;jgrapht-core&quot;;v=&quot;1.4.0&quot;,Algorithms-1.0.jar;g=&quot;BHT&quot;;a=&quot;Algorithms&quot;;v=&quot;1.0&quot;,jblas-1.2.4.jar;g=&quot;org.jblas&quot;;a=&quot;jblas&quot;;v=&quot;1.2.4&quot;,miglayout-swing-5.2.jar;g=&quot;com.miglayout&quot;;a=&quot;miglayout-swing&quot;;v=&quot;5.2&quot;" />
         </additionalProperties>
         <additionalJARContents />
       </configuration>
@@ -29,6 +32,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="HGA-1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: BHT:Algorithms:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jblas:jblas:1.2.4" level="project" />
     <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:1.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.jheaps:jheaps:0.11" level="project" />
     <orderEntry type="library" name="Maven: com.miglayout:miglayout-swing:5.2" level="project" />

@@ -9,22 +9,25 @@
         <bundle.namespace>Cytoscape.plugin.PNMatcher.internal</bundle.namespace>
         <project.version>1.0</project.version>
         <!--dependencies version-->
+        <jblas.version>1.2.4</jblas.version>
         <cytoscape.api.version>3.7.0</cytoscape.api.version>
         <osgi.api.version>4.2.0</osgi.api.version>
         <maven-bundle-plugin.version>4.2.1</maven-bundle-plugin.version>
         <miglayout.version>5.2</miglayout.version>
         <swingx.version>1.6.1</swingx.version>
         <jgrapht.core.version>1.4.0</jgrapht.core.version>
+        <!--plugins version-->
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     </properties>
     <groupId>Cytoscape.plugin.PNMatcher</groupId>
     <artifactId>PNMatcher</artifactId>
     <packaging>bundle</packaging>
     <version>1.0</version>
     <description>
-        PNMatcher provides reliable and optimal mapping between PPI networks concerning about protein sequences and topological similarity.
+        PNMatcher provides reliable and optimal mapping between PPI networks concerning about protein sequences and
+        topological similarity.
     </description>
     <name>PNMatcher</name>
-
 
     <build>
         <plugins>
@@ -32,7 +35,7 @@
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -58,10 +61,10 @@
                         <Export-Package>!${bundle.namespace}.*</Export-Package>
                         <Private-Package>${bundle.namespace}.*</Private-Package>
                         <Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
-                        <Embed-Dependency>
-                            miglayout-swing;inline=true,
-                            miglayout-core;inline=true
-                        </Embed-Dependency>
+                        <Import-Package>
+                            !tech.tablesaw.*,!org.swinglabs.swingx,!org.jdesktop.swingx.*,*;resolution:=optional
+                        </Import-Package>
+                        <Embed-Dependency>*;scope=!provided|test;groupId=!org.cytoscape</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
@@ -103,14 +106,20 @@
             <groupId>BHT</groupId>
             <artifactId>Algorithms</artifactId>
             <version>1.0</version>
+            <optional>true</optional>
             <scope>compile</scope>
+        </dependency>
+        <!-- java linear algebra lib for algorithms building -->
+        <dependency>
+            <groupId>org.jblas</groupId>
+            <artifactId>jblas</artifactId>
+            <version>${jblas.version}</version>
             <optional>true</optional>
         </dependency>
         <!--network data structure base-->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <scope>compile</scope>
             <version>${jgrapht.core.version}</version>
             <optional>true</optional>
         </dependency>
@@ -119,8 +128,8 @@
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-swing</artifactId>
             <scope>compile</scope>
-            <version>${miglayout.version}</version>
             <optional>true</optional>
+            <version>${miglayout.version}</version>
         </dependency>
         <!--cytoscape-->
         <dependency>

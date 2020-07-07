@@ -1,8 +1,7 @@
-package Cytoscape.plugin.PNMatch.internal.UI;
+package Cytoscape.plugin.PNMatcher.internal.UI;
 
-import Cytoscape.plugin.PNMatch.internal.Tasks.DisplayTask;
-import Cytoscape.plugin.PNMatch.internal.Tasks.HGATask;
-import UI.TreeTable;
+import Cytoscape.plugin.PNMatcher.internal.Tasks.DisplayTask;
+import Cytoscape.plugin.PNMatcher.internal.Tasks.HGATask;
 import net.miginfocom.swing.MigLayout;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -15,19 +14,14 @@ import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
-import org.jgrapht.alg.util.Pair;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static Cytoscape.plugin.PNMatch.internal.UI.InputsAndServices.networkManager;
+import static Cytoscape.plugin.PNMatcher.internal.UI.InputsAndServices.networkManager;
 
 
 // Define a CytoPanel class
@@ -44,12 +38,10 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
     private JButton simMatrixBrowseButton;
     private JButton analyseButton;
-    private JButton closeButton;
 
     private JLabel hVal;
     private JFileChooser simMatrixFileChooser;
     // parameters for HGA
-    private int non_zeros_every_row_MAX; // this is the h value to shape the HA matrix by selecting rows having at least h non zero elements
     private boolean isindexQuery;
     private JLabel simMatrixLabel;
     private JSlider hValSlider;
@@ -67,19 +59,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
 
     private void addListeners() {
-        // targetNetworks listener
-        targetNetworks.addActionListener(actionEvent -> {
-            CyNetwork selectedNetwork = targetNetworks.getItemAt(targetNetworks.getSelectedIndex());
-            non_zeros_every_row_MAX = selectedNetwork.getNodeCount();
-            // dramatically change the component
-            hValSlider.setValue(non_zeros_every_row_MAX / 2);
-            hValSlider.setMaximum(non_zeros_every_row_MAX);
-            hVal.setText(Integer.toString(non_zeros_every_row_MAX / 2));
-            hValSlider.revalidate();
-            hVal.revalidate();
-
-        });
-
         // FileBrowseButtons
         simMatrixBrowseButton.addActionListener(actionEvent -> {
             int status = simMatrixFileChooser.showOpenDialog(null);
@@ -90,7 +69,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         });
         hValSlider.addChangeListener(actionEvent -> {
             int val = hValSlider.getValue();
-            hVal.setText(Integer.toString(val));
+            hVal.setText(val +"%");
         });
 
         // analyseButton settings
@@ -98,47 +77,29 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             setUserInput();
             TaskIterator it = new TaskIterator();
             HGATask hgaTask = new HGATask();
-            DisplayTask displayTask = new DisplayTask();
-            it.append(hgaTask);
-            taskManager.execute(it);
+//            DisplayTask displayTask = new DisplayTask();
+//            it.append(hgaTask);
+//            it.append(displayTask);
+//            taskManager.execute(it);
         });
-        // close
-        closeButton.addActionListener(actionEvent -> System.exit(0));
 
-    }
-
-
-
-    private void insertToTable(HashMap<String, List<Pair<String, String>>> infoMap, TreeTable treeTable) {
-
-        List<String[]> content = new ArrayList<>();
-        for (Map.Entry<String, List<Pair<String, String>>> mapEntry : infoMap.entrySet()) {
-            List<Pair<String, String>> rowIndex = mapEntry.getValue();
-            String name = mapEntry.getKey();
-            // head
-            content.add(new String[]{name});
-            // ID
-            for (Pair<String, String> index : rowIndex) {
-                String[] row = new String[3];
-                // ID
-                row[0] = index.getFirst();
-                // name
-                row[1] = name;
-                // description
-                row[2] = index.getSecond();
-                content.add(row);
-            }
-        }
-        treeTable.setContent(content);
     }
 
     private void setUserInput() {
         // shift all parameters from UI to a specific class to export users's information
         // networks
+        // check if there's no networks input
+
         InputsAndServices.indexNetwork = (CyNetwork) indexNetworks.getSelectedItem();
         InputsAndServices.targetNetwork= (CyNetwork) targetNetworks.getSelectedItem();
+        if(InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null){
+            throw new IllegalArgumentException("Both index-network and target-network should be selected.");
+        }
         InputsAndServices.simMatFile= simMatrixFileChooser.getSelectedFile();
-        InputsAndServices.hVal = hValSlider.getValue();
+        if(InputsAndServices.simMatFile == null){
+            throw new IllegalArgumentException("Similarity matrix has been loaded.");
+        }
+        InputsAndServices.hVal = (double)hValSlider.getValue()/100;
         InputsAndServices.tol = Double.parseDouble(tolerance.getText());
         InputsAndServices.bF = Double.parseDouble(seqFactor.getText());
     }
@@ -160,10 +121,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         if (indexNetworks.getItemCount() != 0) {
             indexNetworks.setSelectedIndex(0);
             targetNetworks.setSelectedIndex(0);
-            // initialize parameters
-            non_zeros_every_row_MAX = targetNetworks.getItemAt(0).getNodeCount();
-        } else {
-            non_zeros_every_row_MAX = 0;
         }
         // graphs panel components initialization
         JPanel graphsPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
@@ -182,13 +139,13 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         simMatrixFileChooser = new JFileChooser();
 
         // params
-        forcedCheck = new JCheckBox("Map same nodes in a prefuse.util.force way");
+        forcedCheck = new JCheckBox("except for same nodes");
         forcedCheck.setSelected(true);
-        JLabel hValLabel = new JLabel("Non-zero items per row for H-matrix:");
-        hVal = new JLabel(Integer.toString(non_zeros_every_row_MAX / 2));
+        JLabel hValLabel = new JLabel("Hungarian account:");
+        hVal = new JLabel(100 / 2 +"%");
         hValSlider = new JSlider();
-        hValSlider.setMaximum(non_zeros_every_row_MAX);
-        hValSlider.setValue(non_zeros_every_row_MAX / 2);
+        hValSlider.setMaximum(100);
+        hValSlider.setValue(100 / 2);
         JLabel toleranceLabel = new JLabel("Tolerance for iteration:");
         tolerance = new JTextField("0.01");
         JLabel seqFactorLabel = new JLabel("weight account for sequence similarity:");
@@ -196,7 +153,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
         // analysis button
         analyseButton = new JButton("Analyse");
-        closeButton = new JButton("Close");
         // fileChoosers settings
         setFileChoosers();
 
@@ -225,13 +181,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         rootPanel.add(paramsPanel, "grow");
         rootPanel.add(analyseButton, "center");
 
-
     }
 
     private void setFileChoosers() {
         FileNameExtensionFilter faaFileFilter = new FileNameExtensionFilter("" +
-                "FASTA format: nucleotide sequences or amino acid (protein) sequences",
-                "fasta", "fna", "ffn", "faa", "frn");
+                "CSV format: local blastp result",
+                "csv");
         FileNameExtensionFilter txtFileFilter = new FileNameExtensionFilter("TEXT FIle format",
                 "txt");
         // fileFormat settings
@@ -278,7 +233,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
     @Override
     public String getTitle() {
-        return "BNMatch";
+        return "PNMatcher";
     }
 
     @Override

@@ -1,11 +1,11 @@
-package Cytoscape.plugin.PNMatch.internal;
+package Cytoscape.plugin.PNMatcher.internal;
 /**
  * @author Haotian Bai
  * @Institute CS school,Shanghai University
  */
 
-import Cytoscape.plugin.PNMatch.internal.UI.ControlPanel;
-import Cytoscape.plugin.PNMatch.internal.UI.InputsAndServices;
+import Cytoscape.plugin.PNMatcher.internal.UI.ControlPanel;
+import Cytoscape.plugin.PNMatcher.internal.UI.InputsAndServices;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CytoPanelComponent;

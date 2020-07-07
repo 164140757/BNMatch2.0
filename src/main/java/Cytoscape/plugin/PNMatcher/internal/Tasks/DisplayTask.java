@@ -1,6 +1,6 @@
-package Cytoscape.plugin.PNMatch.internal.Tasks;
+package Cytoscape.plugin.PNMatcher.internal.Tasks;
 
-import Cytoscape.plugin.PNMatch.internal.UI.InputsAndServices;
+import Cytoscape.plugin.PNMatcher.internal.UI.InputsAndServices;
 import org.cytoscape.model.*;
 import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -23,7 +23,6 @@ public class DisplayTask extends AbstractTask {
     private final CyNetworkNaming namingUtil;
     private final CyNetworkFactory ntf;
     private final CyNetworkViewManager nvm;
-    private CyNetwork res;
 
     public DisplayTask() {
         this.idNet = InputsAndServices.indexNetwork;
@@ -35,8 +34,10 @@ public class DisplayTask extends AbstractTask {
 
     @Override
     public void run(TaskMonitor taskMonitor) {
-        this.res = constructCombinedNetwork();
+        AlignmentTaskData.combinedNet = constructCombinedNetwork();
+        super.insertTasksAfterCurrentTask(new PairLayoutTask());
     }
+
 
     private CyNetwork constructCombinedNetwork(){
         // create networks to show results
@@ -76,8 +77,8 @@ public class DisplayTask extends AbstractTask {
         }
         for(CyEdge edge : net.getEdgeList())
         {
-            CyEdge newEdge = net.addEdge(old2New.get(edge.getSource()), old2New.get(edge.getTarget()), edge.isDirected());
-            CyRow newRow = net.getRow(newEdge);
+            CyEdge newEdge = res.addEdge(old2New.get(edge.getSource()), old2New.get(edge.getTarget()), edge.isDirected());
+            CyRow newRow = res.getRow(newEdge);
             newRow.set(NETWORK_ID, netID);
             CyRow oldRow = net.getRow(edge);
             for(Map.Entry<String, Class> e : edgeCols.entrySet())
@@ -139,7 +140,4 @@ public class DisplayTask extends AbstractTask {
         }
     }
 
-    public CyNetwork getRes() {
-        return res;
-    }
 }

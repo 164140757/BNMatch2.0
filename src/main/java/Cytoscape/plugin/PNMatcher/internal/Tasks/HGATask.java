@@ -6,15 +6,16 @@
  * @Description: In User Settings Edit
  * @FilePath: \BNMatch2.0\src\main\java\Cytoscape\plugin\BNMatch\internal\AlignTask.java
  */
-package Cytoscape.plugin.PNMatch.internal.Tasks;
+package Cytoscape.plugin.PNMatcher.internal.Tasks;
 
-import Algorithms.Graph.HGA.HGA;
-import Algorithms.Graph.Network.Node;
-import Algorithms.Graph.Utils.AdjList.DirectedGraph;
-import Algorithms.Graph.Utils.AdjList.UndirectedGraph;
-import Algorithms.Graph.Utils.SimMat;
-import Cytoscape.plugin.PNMatch.internal.UI.InputsAndServices;
-import IO.GraphFileReader;
+
+import Cytoscape.plugin.PNMatcher.internal.UI.InputsAndServices;
+import Internal.Algorithms.Graph.HGA.HGA;
+import Internal.Algorithms.Graph.Network.Node;
+import Internal.Algorithms.Graph.Utils.AdjList.DirectedGraph;
+import Internal.Algorithms.Graph.Utils.AdjList.UndirectedGraph;
+import Internal.Algorithms.Graph.Utils.SimMat;
+import Internal.Algorithms.IO.GraphFileReader;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -24,8 +25,9 @@ import org.cytoscape.work.TaskMonitor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class HGATask extends AbstractTask {
 
@@ -36,14 +38,15 @@ public class HGATask extends AbstractTask {
 	 */
 	public HGATask() {
 		this.ntf  = InputsAndServices.networkFactory;
+		try {
+			HGARun();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void run(TaskMonitor monitor) {
-		// check if there's no networks input
-		if(InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null){
-			throw new RuntimeException("Both index-network and target-network should be selected.");
-		}
-		monitor.setTitle("HGA mapping");
+		monitor.setStatusMessage("HGA mapping");
 		// HGA
 		try {
 			HGARun();
@@ -53,6 +56,7 @@ public class HGATask extends AbstractTask {
 	}
 
 	private void HGARun() throws IOException {
+
 		GraphFileReader reader = new GraphFileReader(true, false, false);
 		CyNetwork indexNetwork = InputsAndServices.indexNetwork;
 		CyNetwork targetNetwork = InputsAndServices.targetNetwork;
@@ -60,9 +64,10 @@ public class HGATask extends AbstractTask {
 		UndirectedGraph indNet = convert(indexNetwork);
 		UndirectedGraph tgtNet = convert(targetNetwork);
 		SimMat simMat = reader.readToSimMat(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
+		HGA.debugOut = false;
+		HGA.log = false;
 		HGA hga = new HGA(simMat, indNet, tgtNet, InputsAndServices.bF, InputsAndServices.force, InputsAndServices.hVal, InputsAndServices.tol);
-		hga.debugOut = false;
-		hga.log = false;
+
 		hga.run();
 		// score
 		AlignmentTaskData.EC = hga.getEC_res();
@@ -70,7 +75,34 @@ public class HGATask extends AbstractTask {
 		AlignmentTaskData.PE = hga.getPE_res();
 		AlignmentTaskData.PS = hga.getPS_res();
 		AlignmentTaskData.score = hga.getScore_res();
-		AlignmentTaskData.mapping = hga.getMappingResult();
+		setupMapping(indexNetwork,targetNetwork,hga.getMappingResult());
+	}
+
+	private void setupMapping(CyNetwork indexNetwork, CyNetwork targetNetwork, HashMap<String, String> mappingResult) {
+		HashMap<CyNode,CyNode> res = new HashMap<>();
+		HashSet<CyNode> leftTgtNodes = new HashSet<>();
+		// name to UID
+		HashMap<String, Long> indexNetMap = getNameUIDMap(indexNetwork);
+		Map<String, String> mapInverse = mappingResult.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue,Map.Entry::getKey));
+		for(CyNode targetNode : targetNetwork.getNodeList()){
+			String nName = targetNetwork.getRow(targetNode).get(CyNetwork.NAME, String.class);
+			if(mapInverse.containsKey(nName)){
+				String indexName = mapInverse.get(nName);
+				CyNode indexNode =indexNetwork.getNode(indexNetMap.get(indexName));
+				res.put(indexNode,targetNode);
+			}
+			else{
+				leftTgtNodes.add(targetNode);
+			}
+		}
+		AlignmentTaskData.mapping = res;
+		AlignmentTaskData.leftTgtNodes = leftTgtNodes;
+	}
+
+	private HashMap<String, Long> getNameUIDMap(CyNetwork network) {
+		HashMap<String,Long> res = new HashMap<>();
+		network.getNodeList().forEach(cyNode -> res.put(network.getRow(cyNode).get(CyNetwork.NAME, String.class),cyNode.getSUID()));
+		return res;
 	}
 
 
@@ -80,7 +112,8 @@ public class HGATask extends AbstractTask {
 		Map<Long, Node> nodeMap = new HashMap<>();
 		// get nodes map
 		for(CyNode cynode : network.getNodeList()) {
-			Node node = new Node(network.getRow(cynode).get(CyNetwork.NAME, String.class));
+			String nName = network.getRow(cynode).get(CyNetwork.NAME, String.class);
+			Node node = new Node(nName);
 			nodeMap.put(cynode.getSUID(), node);
 		}
 		// add edge

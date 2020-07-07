@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BNMatch.iml" filepath="$PROJECT_DIR$/BNMatch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PNMatcher.iml" filepath="$PROJECT_DIR$/PNMatcher.iml" />
     </modules>
   </component>
 </project>

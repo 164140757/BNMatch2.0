@@ -1,4 +1,4 @@
-package Cytoscape.plugin.PNMatch.internal.Canvas;
+package Cytoscape.plugin.PNMatcher.internal.Canvas;
 
 import org.cytoscape.view.presentation.property.values.NodeShape;
 

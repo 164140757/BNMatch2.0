@@ -1,19 +1,41 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1593769969144
+Bnd-LastModified: 1594122070338
 Build-Jdk: 14
 Built-By: Haotian Bai
 Bundle-Activator: Cytoscape.plugin.PNMatcher.internal.CyActivator
+Bundle-ClassPath: .,Algorithms-1.0.jar,jblas-1.2.4.jar,jgrapht-core-1.4.
+ 0.jar,jheaps-0.11.jar,miglayout-swing-5.2.jar,miglayout-core-5.2.jar
 Bundle-Description: PNMatcher provides reliable and optimal mapping betw
- een PPI networks concerning about protein sequences and topological sim
- ilarity.
+ een PPI networks concerning about protein sequences and        topologi
+ cal similarity.
 Bundle-ManifestVersion: 2
 Bundle-Name: PNMatcher
 Bundle-SymbolicName: Cytoscape.plugin
 Bundle-Version: 1.0
 Created-By: Apache Maven Bundle Plugin
-Embed-Dependency: miglayout-swing;inline=true,miglayout-core;inline=true
+Embed-Dependency: *;scope=!provided|test;groupId=!org.cytoscape
 Embed-Transitive: true
-Import-Package: Cytoscape.plugin.PNMatcher.internal,javax.swing,javax.sw
- ing.border,javax.swing.text
-Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Embedded-Artifacts: Algorithms-1.0.jar;g="BHT";a="Algorithms";v="1.0",jb
+ las-1.2.4.jar;g="org.jblas";a="jblas";v="1.2.4",jgrapht-core-1.4.0.jar;
+ g="org.jgrapht";a="jgrapht-core";v="1.4.0",jheaps-0.11.jar;g="org.jheap
+ s";a="jheaps";v="0.11",miglayout-swing-5.2.jar;g="com.miglayout";a="mig
+ layout-swing";v="5.2",miglayout-core-5.2.jar;g="com.miglayout";a="migla
+ yout-core";v="5.2"
+Import-Package: javax.swing;resolution:=optional,javax.swing.border;reso
+ lution:=optional,javax.swing.event;resolution:=optional,javax.swing.fil
+ echooser;resolution:=optional,javax.swing.text;resolution:=optional,org
+ .apache.commons.io;resolution:=optional,org.cytoscape.application.swing
+ ;resolution:=optional;version="[3.7,4)",org.cytoscape.event;resolution:
+ =optional;version="[3.7,4)",org.cytoscape.model;resolution:=optional;ve
+ rsion="[3.7,4)",org.cytoscape.model.events;resolution:=optional;version
+ ="[3.7,4)",org.cytoscape.service.util;resolution:=optional;version="[3.
+ 7,4)",org.cytoscape.session;resolution:=optional;version="[3.7,4)",org.
+ cytoscape.view.layout;resolution:=optional;version="[3.7,4)",org.cytosc
+ ape.view.model;resolution:=optional;version="[3.7,4)",org.cytoscape.vie
+ w.presentation.property;resolution:=optional;version="[3.7,4)",org.cyto
+ scape.view.presentation.property.values;resolution:=optional;version="[
+ 3.7,4)",org.cytoscape.work;resolution:=optional;version="[3.7,4)",org.c
+ ytoscape.work.undo;resolution:=optional;version="[3.7,4)",org.osgi.fram
+ ework;resolution:=optional;version="[1.5,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=11))"
 Tool: Bnd-4.2.0.201903051501
