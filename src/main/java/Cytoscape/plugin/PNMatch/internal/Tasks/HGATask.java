@@ -13,7 +13,7 @@ import Algorithms.Graph.Network.Node;
 import Algorithms.Graph.Utils.AdjList.DirectedGraph;
 import Algorithms.Graph.Utils.AdjList.UndirectedGraph;
 import Algorithms.Graph.Utils.SimMat;
-import Cytoscape.plugin.PNMatch.internal.UI.Parameters;
+import Cytoscape.plugin.PNMatch.internal.UI.InputsAndServices;
 import IO.GraphFileReader;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -26,32 +26,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
 public class HGATask extends AbstractTask {
 
-	private final Parameters params;
 	private final CyNetworkFactory ntf;
-	public double EC;
-	public double ES;
-	public double PE;
-	public double PS;
-	public double score;
-	public HashMap<String, String> mapping;
-	public CyNetwork indexNetwork;
 
 	/**
 	 * Create new AlignTask instance.
-	 * @param params Parameters for the instance.
 	 */
-	public HGATask(CyNetworkFactory networkFactory,Parameters params) {
-		this.params = params;
-		this.ntf  = networkFactory;
+	public HGATask() {
+		this.ntf  = InputsAndServices.networkFactory;
 	}
 	
 	public void run(TaskMonitor monitor) {
 		// check if there's no networks input
-		if(params.indexNetwork == null || params.targetNetwork == null){
+		if(InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null){
 			throw new RuntimeException("Both index-network and target-network should be selected.");
 		}
 		monitor.setTitle("HGA mapping");
@@ -61,31 +50,27 @@ public class HGATask extends AbstractTask {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
 
 	private void HGARun() throws IOException {
 		GraphFileReader reader = new GraphFileReader(true, false, false);
-		indexNetwork = params.indexNetwork;
-		CyNetwork targetNetwork = params.targetNetwork;
-		File simMatFile = params.simMatFile;
+		CyNetwork indexNetwork = InputsAndServices.indexNetwork;
+		CyNetwork targetNetwork = InputsAndServices.targetNetwork;
+		File simMatFile = InputsAndServices.simMatFile;
 		UndirectedGraph indNet = convert(indexNetwork);
 		UndirectedGraph tgtNet = convert(targetNetwork);
 		SimMat simMat = reader.readToSimMat(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
-//		hVal, tolerance, bio-factor
-		Vector<Double> p = params.params;
-		HGA hga = new HGA(simMat, indNet, tgtNet,p.get(2),params.force,p.get(0),p.get(1));
+		HGA hga = new HGA(simMat, indNet, tgtNet, InputsAndServices.bF, InputsAndServices.force, InputsAndServices.hVal, InputsAndServices.tol);
 		hga.debugOut = false;
 		hga.log = false;
 		hga.run();
 		// score
-		EC = hga.getEC_res();
-		ES = hga.getES_res();
-		PE = hga.getPE_res();
-		PS = hga.getPS_res();
-		score = hga.getScore_res();
-		mapping = hga.getMappingResult();
+		AlignmentTaskData.EC = hga.getEC_res();
+		AlignmentTaskData.ES = hga.getES_res();
+		AlignmentTaskData.PE = hga.getPE_res();
+		AlignmentTaskData.PS = hga.getPS_res();
+		AlignmentTaskData.score = hga.getScore_res();
+		AlignmentTaskData.mapping = hga.getMappingResult();
 	}
 
 
@@ -120,6 +105,5 @@ public class HGATask extends AbstractTask {
 		return out;
 	}
 
-
-
 }
+
