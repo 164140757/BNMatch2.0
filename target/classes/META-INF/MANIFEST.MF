@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1594198857867
+Bnd-LastModified: 1594200366841
 Build-Jdk: 14
 Built-By: Haotian Bai
 Bundle-Activator: Cytoscape.plugin.PNMatcher.internal.CyActivator

@@ -30,14 +30,12 @@ public class DisplayTask extends AbstractTask {
         this.tgtNet = InputsAndServices.targetNetwork;
         this.namingUtil = InputsAndServices.naming;
         this.ntf = InputsAndServices.networkFactory;
-        AlignmentTaskData.combinedNet = constructCombinedNetwork();
     }
 
     @Override
     public void run(TaskMonitor taskMonitor) {
         taskMonitor.setStatusMessage("setting up result view...");
         AlignmentTaskData.combinedNet = constructCombinedNetwork();
-        super.insertTasksAfterCurrentTask(new PairLayoutTask());
     }
 
 

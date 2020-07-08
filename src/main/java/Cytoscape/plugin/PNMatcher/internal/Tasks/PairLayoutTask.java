@@ -12,6 +12,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.annotations.ShapeAnnotation;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
@@ -39,6 +40,14 @@ public class PairLayoutTask extends AbstractTask {
     private VisualStyleFactory visualStyleFactoryServiceRef;
 
     public PairLayoutTask() {
+
+    }
+
+
+
+    @Override
+    public void run(TaskMonitor taskMonitor) {
+        taskMonitor.setStatusMessage("adjusting nodes' positions...");
         networkManager = InputsAndServices.networkManager;
         viewFactory = InputsAndServices.networkViewFactory;
         eventHelper = InputsAndServices.eventHelper;
@@ -51,23 +60,6 @@ public class PairLayoutTask extends AbstractTask {
         CyNetworkView view = getCyNetworkView(combinedNet,viewManager,viewFactory);
         oldViewToNew(view);
         createPair(view);
-    }
-
-
-
-    @Override
-    public void run(TaskMonitor taskMonitor) {
-        taskMonitor.setStatusMessage("adjusting nodes' positions...");
-        networkManager = InputsAndServices.networkManager;
-        viewFactory = InputsAndServices.networkViewFactory;
-        eventHelper = InputsAndServices.eventHelper;
-        //pair layout setting
-        CyNetwork combinedNet = AlignmentTaskData.combinedNet;
-        networkManager.addNetwork(combinedNet);
-        CyNetworkView view = viewFactory.createNetworkView(combinedNet);
-        oldViewToNew(view);
-        createPair(view);
-
     }
 
     private void oldViewToNew(CyNetworkView view) {
@@ -83,7 +75,7 @@ public class PairLayoutTask extends AbstractTask {
     private double getShift(CyNetworkView indView, CyNetworkView tgtView) {
         double idV = hScale(indView);
         double tgtV = hScale(tgtView);
-        return (tgtV-idV)*HORIZONTAL_SCALE;
+        return (tgtV+idV)*HORIZONTAL_SCALE;
     }
 
     private double hScale(CyNetworkView indView) {
@@ -98,7 +90,7 @@ public class PairLayoutTask extends AbstractTask {
         return maxx-minx;
     }
 
-    private void copyViewLocationTo(CyNetworkView from, HashMap<CyNode, CyNode> oldToNew, CyNetworkView to,double shift) {
+    private void copyViewLocationTo(CyNetworkView from, HashMap<CyNode, CyNode> oldToNew, CyNetworkView to,double xff) {
         from.getNodeViews().forEach(
                 f->{
                     CyNode node = f.getModel();
@@ -106,7 +98,7 @@ public class PairLayoutTask extends AbstractTask {
                     double x = f.getVisualProperty(BasicVisualLexicon.NODE_X_LOCATION);
                     double y = f.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
                     to.getNodeView(tNode).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
-                    to.getNodeView(tNode).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, x+shift);
+                    to.getNodeView(tNode).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x+xff);
                 }
         );
     }
@@ -118,9 +110,6 @@ public class PairLayoutTask extends AbstractTask {
             if(index!=null&&target!=null) {
                 View<CyNode> indexV = view.getNodeView(index);
                 View<CyNode> tgtV = view.getNodeView(target);
-                // location set parallel
-                double y = indexV.getVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION);
-                tgtV.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
                 // color and shape
                 Pair<Color, NodeShape> toAdd = randomShapeAndColor();
                 indexV.setVisualProperty(BasicVisualLexicon.NODE_SHAPE, toAdd.getSecond());
@@ -128,6 +117,17 @@ public class PairLayoutTask extends AbstractTask {
                 indexV.setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR, toAdd.getFirst());
                 tgtV.setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR, toAdd.getFirst());
             }
+            else{
+                if(index == null){
+                    View<CyNode> tgtV = view.getNodeView(target);
+                    tgtV.setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR,Color.BLACK );
+                }
+                else{
+                    View<CyNode> indexV = view.getNodeView(index);
+                    indexV.setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR,Color.BLACK);
+                }
+            }
+
         });
         view.fitContent();
         view.updateView();

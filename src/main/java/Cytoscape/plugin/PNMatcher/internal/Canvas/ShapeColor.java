@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class ShapeColor {
-    public static Collection<Color> colors = new HashSet<>(Arrays.asList(Color.BLACK,Color.magenta,Color.BLUE,
+    public static Collection<Color> colors = new HashSet<>(Arrays.asList(Color.LIGHT_GRAY,Color.magenta,Color.BLUE,
             Color.cyan,Color.GRAY,Color.green,Color.ORANGE,Color.pink,Color.red,Color.YELLOW));
     public static Collection<NodeShape> shapes = new HashSet<>(Arrays.asList(NodeShapeVisualProperty.TRIANGLE,
             NodeShapeVisualProperty.ELLIPSE, NodeShapeVisualProperty.HEXAGON, NodeShapeVisualProperty.OCTAGON,

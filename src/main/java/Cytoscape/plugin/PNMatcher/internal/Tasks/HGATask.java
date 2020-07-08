@@ -38,11 +38,6 @@ public class HGATask extends AbstractTask {
 	 */
 	public HGATask() {
 		this.ntf  = InputsAndServices.networkFactory;
-		try {
-			HGARun();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public void run(TaskMonitor monitor) {

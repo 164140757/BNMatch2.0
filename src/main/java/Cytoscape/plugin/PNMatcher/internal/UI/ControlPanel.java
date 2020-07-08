@@ -70,7 +70,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         });
         hValSlider.addChangeListener(actionEvent -> {
             int val = hValSlider.getValue();
-            hVal.setText(val +"%");
+            hVal.setText(val + "%");
         });
 
         // analyseButton settings
@@ -78,12 +78,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             setUserInput();
             TaskIterator it = new TaskIterator();
             HGATask hgaTask = new HGATask();
-//            it.append(hgaTask);
-//            taskManager.execute(it);
-//            it.append(displayTask);
-            // it append(pairLayoutTask);
             DisplayTask displayTask = new DisplayTask();
             PairLayoutTask pairLayoutTask = new PairLayoutTask();
+            it.append(displayTask);
+            it.append(pairLayoutTask);
+            it.append(hgaTask);
+            taskManager.execute(it);
         });
 
     }
@@ -94,15 +94,23 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         // check if there's no networks input
 
         InputsAndServices.indexNetwork = (CyNetwork) indexNetworks.getSelectedItem();
-        InputsAndServices.targetNetwork= (CyNetwork) targetNetworks.getSelectedItem();
-        if(InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null){
+        InputsAndServices.targetNetwork = (CyNetwork) targetNetworks.getSelectedItem();
+        if (InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null) {
             System.out.println("Both index-network and target-network should be selected.");
         }
-        InputsAndServices.simMatFile= simMatrixFileChooser.getSelectedFile();
-        if(InputsAndServices.simMatFile == null){
+        // file format
+        String[] strArray= InputsAndServices.simMatFile.getName().split("\\.");
+        String format = strArray[strArray.length-1];
+        if(format.equals("txt")){
+            InputsAndServices.simMatFile = simMatrixFileChooser.getSelectedFile();
+        }
+        else if(format.equals("csv")){
+
+        }
+        if (InputsAndServices.simMatFile == null) {
             System.out.println("Similarity matrix has been loaded.");
         }
-        InputsAndServices.hVal = (double)hValSlider.getValue()/100;
+        InputsAndServices.hVal = (double) hValSlider.getValue() / 100;
         InputsAndServices.tol = Double.parseDouble(tolerance.getText());
         InputsAndServices.bF = Double.parseDouble(seqFactor.getText());
     }
@@ -145,7 +153,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         forcedCheck = new JCheckBox("except for same nodes");
         forcedCheck.setSelected(true);
         JLabel hValLabel = new JLabel("Hungarian account:");
-        hVal = new JLabel(100 / 2 +"%");
+        hVal = new JLabel(100 / 2 + "%");
         hValSlider = new JSlider();
         hValSlider.setMaximum(100);
         hValSlider.setValue(100 / 2);
@@ -169,7 +177,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         fileInfoPanel.add(simMatrixBrowseButton, "wrap");
 
         // paramsPanel
-        paramsPanel.add(forcedCheck,"wrap");
+        paramsPanel.add(forcedCheck, "wrap");
         paramsPanel.add(hValLabel);
         paramsPanel.add(hVal);
         paramsPanel.add(hValSlider, "wrap");
