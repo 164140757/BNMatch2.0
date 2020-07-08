@@ -9,6 +9,7 @@ import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.undo.UndoSupport;
@@ -39,6 +40,7 @@ public final class InputsAndServices {
     public static CyNetworkViewFactory networkViewFactory;
     public static CyLayoutAlgorithmManager layoutAlgorithmManager;
     public static CyEventHelper eventHelper;
+    public static VisualMappingFunctionFactory mapFactoryService;
 
     public static void initServices() {
         if(registrar!=null){
@@ -51,6 +53,7 @@ public final class InputsAndServices {
             networkViewFactory = registrar.getService(CyNetworkViewFactory.class);
             layoutAlgorithmManager = registrar.getService(CyLayoutAlgorithmManager.class);
             eventHelper = registrar.getService(CyEventHelper.class);
+            mapFactoryService = registrar.getService(VisualMappingFunctionFactory.class,"(mapping.type=continuous)");
         }
     }
 }

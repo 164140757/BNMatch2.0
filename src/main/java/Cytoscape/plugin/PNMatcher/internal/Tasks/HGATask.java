@@ -75,28 +75,15 @@ public class HGATask extends AbstractTask {
 		AlignmentTaskData.PE = hga.getPE_res();
 		AlignmentTaskData.PS = hga.getPS_res();
 		AlignmentTaskData.score = hga.getScore_res();
-		setupMapping(indexNetwork,targetNetwork,hga.getMappingResult());
+		setupMapping(hga.getMappingResult());
 	}
 
-	private void setupMapping(CyNetwork indexNetwork, CyNetwork targetNetwork, HashMap<String, String> mappingResult) {
-		HashMap<CyNode,CyNode> res = new HashMap<>();
-		HashSet<CyNode> leftTgtNodes = new HashSet<>();
+	private void setupMapping( HashMap<String, String> mappingResult) {
 		// name to UID
-		HashMap<String, Long> indexNetMap = getNameUIDMap(indexNetwork);
 		Map<String, String> mapInverse = mappingResult.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue,Map.Entry::getKey));
-		for(CyNode targetNode : targetNetwork.getNodeList()){
-			String nName = targetNetwork.getRow(targetNode).get(CyNetwork.NAME, String.class);
-			if(mapInverse.containsKey(nName)){
-				String indexName = mapInverse.get(nName);
-				CyNode indexNode =indexNetwork.getNode(indexNetMap.get(indexName));
-				res.put(indexNode,targetNode);
-			}
-			else{
-				leftTgtNodes.add(targetNode);
-			}
-		}
-		AlignmentTaskData.mapping = res;
-		AlignmentTaskData.leftTgtNodes = leftTgtNodes;
+		// save
+		AlignmentTaskData.mapping = mappingResult;
+		AlignmentTaskData.inverseMapping = mapInverse;
 	}
 
 	private HashMap<String, Long> getNameUIDMap(CyNetwork network) {

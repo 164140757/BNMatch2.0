@@ -5,6 +5,7 @@ import org.cytoscape.model.CyNode;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public final class AlignmentTaskData {
     //HGA
@@ -19,9 +20,12 @@ public final class AlignmentTaskData {
     // Total score
     public static double score;
     // mapping result for index vs target networks
-    public static HashMap<CyNode, CyNode> mapping;
+    public static HashMap<CyNode, CyNode> cyNodeMapping;
+    public static HashMap<String, String> mapping;
+    public static Map<String, String> inverseMapping;
     // result to display
     public static CyNetwork combinedNet;
-    // left nodes in the target network without being mapped
-    public static HashSet<CyNode> leftTgtNodes;
+
+    public static HashMap<CyNode, CyNode> indexOldToNew;
+    public static HashMap<CyNode, CyNode> targetOldToNew;
 }

@@ -2,6 +2,7 @@ package Cytoscape.plugin.PNMatcher.internal.UI;
 
 import Cytoscape.plugin.PNMatcher.internal.Tasks.DisplayTask;
 import Cytoscape.plugin.PNMatcher.internal.Tasks.HGATask;
+import Cytoscape.plugin.PNMatcher.internal.Tasks.PairLayoutTask;
 import net.miginfocom.swing.MigLayout;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -77,10 +78,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             setUserInput();
             TaskIterator it = new TaskIterator();
             HGATask hgaTask = new HGATask();
-//            DisplayTask displayTask = new DisplayTask();
 //            it.append(hgaTask);
-//            it.append(displayTask);
 //            taskManager.execute(it);
+//            it.append(displayTask);
+            // it append(pairLayoutTask);
+            DisplayTask displayTask = new DisplayTask();
+            PairLayoutTask pairLayoutTask = new PairLayoutTask();
         });
 
     }
@@ -93,11 +96,11 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         InputsAndServices.indexNetwork = (CyNetwork) indexNetworks.getSelectedItem();
         InputsAndServices.targetNetwork= (CyNetwork) targetNetworks.getSelectedItem();
         if(InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null){
-            throw new IllegalArgumentException("Both index-network and target-network should be selected.");
+            System.out.println("Both index-network and target-network should be selected.");
         }
         InputsAndServices.simMatFile= simMatrixFileChooser.getSelectedFile();
         if(InputsAndServices.simMatFile == null){
-            throw new IllegalArgumentException("Similarity matrix has been loaded.");
+            System.out.println("Similarity matrix has been loaded.");
         }
         InputsAndServices.hVal = (double)hValSlider.getValue()/100;
         InputsAndServices.tol = Double.parseDouble(tolerance.getText());
@@ -194,8 +197,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         simMatrixFileChooser.addChoosableFileFilter(faaFileFilter);
         simMatrixFileChooser.addChoosableFileFilter(txtFileFilter);
         simMatrixFileChooser.setFileFilter(faaFileFilter);
-
-
         // init dictionary
         simMatrixFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
     }
