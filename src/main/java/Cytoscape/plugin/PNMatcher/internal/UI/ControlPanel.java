@@ -98,15 +98,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         if (InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null) {
             System.out.println("Both index-network and target-network should be selected.");
         }
-        // file format
-        String[] strArray= InputsAndServices.simMatFile.getName().split("\\.");
-        String format = strArray[strArray.length-1];
-        if(format.equals("txt")){
-            InputsAndServices.simMatFile = simMatrixFileChooser.getSelectedFile();
-        }
-        else if(format.equals("csv")){
-
-        }
+        InputsAndServices.simMatFile = simMatrixFileChooser.getSelectedFile();
         if (InputsAndServices.simMatFile == null) {
             System.out.println("Similarity matrix has been loaded.");
         }

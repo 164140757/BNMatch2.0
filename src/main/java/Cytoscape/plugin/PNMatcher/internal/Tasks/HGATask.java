@@ -58,7 +58,15 @@ public class HGATask extends AbstractTask {
 		File simMatFile = InputsAndServices.simMatFile;
 		UndirectedGraph indNet = convert(indexNetwork);
 		UndirectedGraph tgtNet = convert(targetNetwork);
-		SimMat simMat = reader.readToSimMat(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
+		String[] strArray= InputsAndServices.simMatFile.getName().split("\\.");
+		String format = strArray[strArray.length-1];
+		SimMat simMat = null;
+		if(format.equals("txt")){
+			simMat = reader.readToSimMat(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
+		}
+		else if(format.equals("csv")){
+
+		}
 		HGA.debugOut = false;
 		HGA.log = false;
 		HGA hga = new HGA(simMat, indNet, tgtNet, InputsAndServices.bF, InputsAndServices.force, InputsAndServices.hVal, InputsAndServices.tol);
