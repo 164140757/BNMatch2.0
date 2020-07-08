@@ -1,6 +1,6 @@
 package Cytoscape.plugin.PNMatcher.internal.UI;
 
-import Cytoscape.plugin.PNMatcher.internal.Tasks.DisplayTask;
+import Cytoscape.plugin.PNMatcher.internal.Tasks.CombineNetworksTask;
 import Cytoscape.plugin.PNMatcher.internal.Tasks.HGATask;
 import Cytoscape.plugin.PNMatcher.internal.Tasks.PairLayoutTask;
 import net.miginfocom.swing.MigLayout;
@@ -78,11 +78,11 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             setUserInput();
             TaskIterator it = new TaskIterator();
             HGATask hgaTask = new HGATask();
-            DisplayTask displayTask = new DisplayTask();
+            CombineNetworksTask combineNetworksTask = new CombineNetworksTask();
             PairLayoutTask pairLayoutTask = new PairLayoutTask();
-            it.append(displayTask);
-            it.append(pairLayoutTask);
             it.append(hgaTask);
+            it.append(combineNetworksTask);
+            it.append(pairLayoutTask);
             taskManager.execute(it);
         });
 

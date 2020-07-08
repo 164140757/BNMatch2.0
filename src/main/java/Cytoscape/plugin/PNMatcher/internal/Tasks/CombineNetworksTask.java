@@ -9,7 +9,7 @@ import org.cytoscape.work.TaskMonitor;
 
 import java.util.*;
 
-public class DisplayTask extends AbstractTask {
+public class CombineNetworksTask extends AbstractTask {
     // network table
     private static final String NETWORKS_LIST = "PNMatcherSourceNetwork";
     // node table
@@ -25,7 +25,7 @@ public class DisplayTask extends AbstractTask {
     private HashMap<CyNode, CyNode> old2NewIndex;
     private HashMap<CyNode, CyNode> old2NewTarget;
 
-    public DisplayTask() {
+    public CombineNetworksTask() {
         this.idNet = InputsAndServices.indexNetwork;
         this.tgtNet = InputsAndServices.targetNetwork;
         this.namingUtil = InputsAndServices.naming;
@@ -77,6 +77,7 @@ public class DisplayTask extends AbstractTask {
             CyNode newNode = res.addNode();
             CyRow newRow = res.getRow(newNode);
             newRow.set(NETWORK_ID, netID);
+            newRow.set("name",strNode);
             if (netID == 1) {
                 old2NewIndex.put(srcNode, newNode);
                 newRow.set(PAIRED_NODE, mapping.get(strNode));

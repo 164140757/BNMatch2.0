@@ -65,7 +65,7 @@ public class HGATask extends AbstractTask {
 			simMat = reader.readToSimMat(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
 		}
 		else if(format.equals("csv")){
-
+			simMat = reader.readToSimMatCSV(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
 		}
 		HGA.debugOut = false;
 		HGA.log = false;

@@ -2,9 +2,9 @@ Cytoscape\plugin\PNMatcher\internal\Tasks\PairLayoutTask.class
 Cytoscape\plugin\PNMatcher\internal\Tasks\HGATask.class
 Cytoscape\plugin\PNMatcher\internal\Tasks\AlignmentTaskData.class
 Cytoscape\plugin\PNMatcher\internal\CyActivator$1.class
+Cytoscape\plugin\PNMatcher\internal\Tasks\CombineNetworksTask.class
 Cytoscape\plugin\PNMatcher\internal\util\CytoUtils.class
 Cytoscape\plugin\PNMatcher\internal\CyActivator.class
 Cytoscape\plugin\PNMatcher\internal\UI\InputsAndServices.class
 Cytoscape\plugin\PNMatcher\internal\Canvas\ShapeColor.class
 Cytoscape\plugin\PNMatcher\internal\UI\ControlPanel.class
-Cytoscape\plugin\PNMatcher\internal\Tasks\DisplayTask.class
