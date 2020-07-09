@@ -64,8 +64,11 @@ public class HGATask extends AbstractTask {
 		if(format.equals("txt")){
 			simMat = reader.readToSimMat(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
 		}
-		else if(format.equals("csv")){
-			simMat = reader.readToSimMatCSV(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes(),true);
+		else if(format.equals("xlsx")||format.equals("xls")){
+			simMat = reader.readToSimMatExcel(simMatFile,indNet.getAllNodes(),tgtNet.getAllNodes());
+		}
+		else{
+			System.out.println("Your file format is incorrect.");
 		}
 		HGA.debugOut = false;
 		HGA.log = false;

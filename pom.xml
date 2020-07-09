@@ -16,6 +16,7 @@
         <miglayout.version>5.2</miglayout.version>
         <swingx.version>1.6.1</swingx.version>
         <jgrapht.core.version>1.4.0</jgrapht.core.version>
+        <MS>4.1.2</MS>
         <!--plugins version-->
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     </properties>
@@ -64,7 +65,10 @@
                         <Import-Package>
                             !tech.tablesaw.*,!org.swinglabs.swingx,!org.jdesktop.swingx.*,*;resolution:=optional
                         </Import-Package>
-                        <Embed-Dependency>*;scope=!provided|test;groupId=!org.cytoscape</Embed-Dependency>
+                        <Embed-Dependency>
+                            * ;scope=!provided|test; groupId=!org.cytoscape
+                        </Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
@@ -130,6 +134,17 @@
             <scope>compile</scope>
             <optional>true</optional>
             <version>${miglayout.version}</version>
+        </dependency>
+        <!--some tools-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${MS}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${MS}</version>
         </dependency>
         <!--cytoscape-->
         <dependency>

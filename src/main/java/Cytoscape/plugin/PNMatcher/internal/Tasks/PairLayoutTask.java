@@ -30,7 +30,7 @@ import static Cytoscape.plugin.PNMatcher.internal.util.CytoUtils.getCyNetworkVie
 
 public class PairLayoutTask extends AbstractTask {
 
-    private static final double HORIZONTAL_SCALE = 1.2;
+    private static final double HORIZONTAL_SCALE = 0.8;
     private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
     private CyNetworkFactory networkFactory;
     private CyNetworkViewManager viewManager;
@@ -120,6 +120,10 @@ public class PairLayoutTask extends AbstractTask {
             if (index != null && target != null) {
                 View<CyNode> indexV = view.getNodeView(index);
                 View<CyNode> tgtV = view.getNodeView(target);
+                indexV.setVisualProperty(BasicVisualLexicon.NODE_LABEL,
+                        view.getModel().getRow(indexV.getModel()).get(CyNetwork.NAME, String.class));
+                tgtV.setVisualProperty(BasicVisualLexicon.NODE_LABEL,
+                        view.getModel().getRow(tgtV.getModel()).get(CyNetwork.NAME, String.class));
                 // color and shape
                 Pair<Color, NodeShape> toAdd = randomShapeAndColor();
                 indexV.setVisualProperty(BasicVisualLexicon.NODE_SHAPE, toAdd.getSecond());

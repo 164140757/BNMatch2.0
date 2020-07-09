@@ -142,7 +142,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         simMatrixFileChooser = new JFileChooser();
 
         // params
-        forcedCheck = new JCheckBox("except for same nodes");
+        forcedCheck = new JCheckBox("force mapping for same nodes");
         forcedCheck.setSelected(true);
         JLabel hValLabel = new JLabel("Hungarian account:");
         hVal = new JLabel(100 / 2 + "%");
@@ -188,9 +188,9 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
     private void setFileChoosers() {
         FileNameExtensionFilter faaFileFilter = new FileNameExtensionFilter("" +
-                "CSV format: local blastp result",
-                "csv");
-        FileNameExtensionFilter txtFileFilter = new FileNameExtensionFilter("TEXT FIle format",
+                "Excel file for simMat: local blastp result",
+                "xlsx","xls");
+        FileNameExtensionFilter txtFileFilter = new FileNameExtensionFilter("TEXT FIle for simMat: local blastp result",
                 "txt");
         // fileFormat settings
 

@@ -1,2 +1,2 @@
-# BNMatch2.0
- BNMatch plugin for cytoscape
+# PNMatcher
+PNMatcher plugin to achieve optimized mapping with both the topological and sequential similarity for cytoscape
