@@ -1,5 +1,8 @@
-package Cytoscape.plugin.PNMatcher.internal.UI;
+package Cytoscape.plugin.BNMatch.internal.UI;
 
+import Internal.Algorithms.Graph.Utils.AdjList.UndirectedGraph;
+import Internal.Algorithms.Graph.Utils.SimMat;
+import org.cytoscape.application.CyUserLog;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -11,17 +14,20 @@ import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.work.TaskManager;
-import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.undo.UndoSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.io.File;
+import java.util.HashMap;
 
 public final class InputsAndServices {
 
-    public static final boolean force = true;
+    public static boolean force;
     public static CyNetwork indexNetwork;
     public static CyNetwork targetNetwork;
-    public static File simMatFile;
+    public static File InputFile;
     // hungarian allocation account
     public static double hVal;
     // tolerance for the similarity to converge
@@ -41,6 +47,12 @@ public final class InputsAndServices {
     public static CyLayoutAlgorithmManager layoutAlgorithmManager;
     public static CyEventHelper eventHelper;
     public static VisualMappingFunctionFactory mapFactoryService;
+    public static final Logger logger = LoggerFactory.getLogger(CyUserLog.NAME);
+    public static SimMat siMat;
+    public static UndirectedGraph indNet;
+    public static UndirectedGraph tgtNet;
+    public static boolean onlyDisplay;
+    public static HashMap<String, String> mapping;
 
     public static void initServices() {
         if(registrar!=null){

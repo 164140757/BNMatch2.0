@@ -1,11 +1,11 @@
-package Cytoscape.plugin.PNMatcher.internal;
+package Cytoscape.plugin.BNMatch.internal;
 /**
  * @author Haotian Bai
  * @Institute CS school,Shanghai University
  */
 
-import Cytoscape.plugin.PNMatcher.internal.UI.ControlPanel;
-import Cytoscape.plugin.PNMatcher.internal.UI.InputsAndServices;
+import Cytoscape.plugin.BNMatch.internal.UI.ControlPanel;
+import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -31,7 +31,7 @@ public class CyActivator extends AbstractCyActivator {
         // Add panel
         ControlPanel cyMainPanel = new ControlPanel();
         // set control panel
-        AbstractCyAction loadControlPanelAction = new AbstractCyAction("Load PNMatcher") {
+        AbstractCyAction loadControlPanelAction = new AbstractCyAction("Load BNMatch") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 registerService(bc, cyMainPanel, CytoPanelComponent.class, new Properties());

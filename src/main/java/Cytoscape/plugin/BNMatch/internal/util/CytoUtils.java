@@ -1,4 +1,4 @@
-package Cytoscape.plugin.PNMatcher.internal.util;
+package Cytoscape.plugin.BNMatch.internal.util;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;

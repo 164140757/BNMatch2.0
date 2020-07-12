@@ -6,7 +6,7 @@
 
     <properties>
         <bundle.symbolicName>Cytoscape.plugin</bundle.symbolicName>
-        <bundle.namespace>Cytoscape.plugin.PNMatcher.internal</bundle.namespace>
+        <bundle.namespace>Cytoscape.plugin.BNMatch.internal</bundle.namespace>
         <project.version>1.0</project.version>
         <!--dependencies version-->
         <jblas.version>1.2.4</jblas.version>
@@ -20,15 +20,15 @@
         <!--plugins version-->
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     </properties>
-    <groupId>Cytoscape.plugin.PNMatcher</groupId>
-    <artifactId>PNMatcher</artifactId>
+    <groupId>Cytoscape.plugin.BNMatch</groupId>
+    <artifactId>BNMatch2</artifactId>
     <packaging>bundle</packaging>
     <version>1.0</version>
     <description>
-        PNMatcher provides reliable and optimal mapping between PPI networks concerning about protein sequences and
-        topological similarity.
+        BNMatch2 provides a reliable and optimized mapping between
+        biological networks with protein sequence and  topological similarity.
     </description>
-    <name>PNMatcher</name>
+    <name>BNMatch2</name>
 
     <build>
         <plugins>
@@ -195,5 +195,12 @@
             <version>${osgi.api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+            <version>2.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 </project>

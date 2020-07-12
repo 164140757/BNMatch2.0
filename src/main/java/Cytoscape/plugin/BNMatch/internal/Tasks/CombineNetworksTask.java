@@ -1,17 +1,18 @@
-package Cytoscape.plugin.PNMatcher.internal.Tasks;
+package Cytoscape.plugin.BNMatch.internal.Tasks;
 
-import Cytoscape.plugin.PNMatcher.internal.UI.InputsAndServices;
+import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
+import Internal.Algorithms.Graph.Network.Edge;
 import org.cytoscape.model.*;
 import org.cytoscape.session.CyNetworkNaming;
-import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
+import org.jgrapht.alg.util.Pair;
 
 import java.util.*;
 
 public class CombineNetworksTask extends AbstractTask {
     // network table
-    private static final String NETWORKS_LIST = "PNMatcherSourceNetwork";
+    private static final String NETWORKS_LIST = "BNMatchSourceNetwork";
     // node table
     private static final String NETWORK_ID = "NetworkID";
     private static final String NODE_UID = "UID";
@@ -44,7 +45,7 @@ public class CombineNetworksTask extends AbstractTask {
         CyNetwork res = ntf.createNetwork();
         String index = InputsAndServices.indexNetwork.getRow(InputsAndServices.indexNetwork).get(CyNetwork.NAME, String.class);
         String target = InputsAndServices.targetNetwork.getRow(InputsAndServices.targetNetwork).get(CyNetwork.NAME, String.class);
-        res.getRow(res).set(CyNetwork.NAME, namingUtil.getSuggestedNetworkTitle("PNMatcher result[" + index + "," + target + "]"));
+        res.getRow(res).set(CyNetwork.NAME, namingUtil.getSuggestedNetworkTitle("BNMatch result[" + index + "," + target + "]"));
         CyTable netTable = res.getDefaultNetworkTable();
         netTable.createListColumn(NETWORKS_LIST, String.class, false);
         List<String> srcNameList = new ArrayList<>(Arrays.asList("IndexNetwork", "TargetNetwork"));
@@ -63,7 +64,7 @@ public class CombineNetworksTask extends AbstractTask {
         addNetwork(idNet, res, 1);
         addNetwork(tgtNet, res, 2);
         distributeUIDs(res);
-        setupMap();
+        setupMap(res);
         return res;
     }
 
@@ -113,7 +114,8 @@ public class CombineNetworksTask extends AbstractTask {
         }
     }
 
-    private void setupMap() {
+    private void setupMap(CyNetwork res) {
+        // nodes
         HashMap<String, String> mapping = AlignmentTaskData.mapping;
         AlignmentTaskData.cyNodeMapping = new HashMap<>();
         HashMap<String, CyNode> tgtMap = new HashMap<>();
@@ -129,9 +131,43 @@ public class CombineNetworksTask extends AbstractTask {
                     AlignmentTaskData.cyNodeMapping.put(old2NewIndex.get(n),tgtNode);
                 }
         );
+        // edges
+        HashMap<Edge,CyEdge> map1 = new HashMap<>();
+        HashMap<Edge,CyEdge> map2 = new HashMap<>();
+        res.getEdgeList().forEach(
+                cyEdge -> {
+                    CyNode n1 = cyEdge.getSource();
+                    CyNode n2 = cyEdge.getTarget();
+                    String str1 = res.getRow(n1).get(CyNetwork.NAME, String.class);
+                    String str2 = res.getRow(n2).get(CyNetwork.NAME, String.class);
+                    int netNum1 = res.getRow(n1).get(NETWORK_ID,Integer.class);
+                    int netNum2 = res.getRow(n2).get(NETWORK_ID,Integer.class);
+                    Edge edge = new Edge(str1,str2);
+                    if(netNum1 == 1 && netNum2 == 1 ){
+                        map1.put(edge,cyEdge);
+                    }
+                    if(netNum1 == 2 && netNum2 == 2 ){
+                        map2.put(edge,cyEdge);
+                    }
+                }
+        );
+        AlignmentTaskData.edgeCyEdgeMap1= map1;
+        AlignmentTaskData.edgeCyEdgeMap2= map2;
+
         AlignmentTaskData.indexOldToNew = old2NewIndex;
         AlignmentTaskData.targetOldToNew = old2NewTarget;
     }
+    /**
+     * Whether the edge contains node str1 and str2
+     */
+    private boolean checkEdge(Edge edge, String str1, String str2) {
+        String toCheck1 = edge.getSource().getStrName();
+        String toCheck2 = edge.getTarget().getStrName();
+        // undirected
+        return (toCheck1.equals(str1) && toCheck2.equals(str2)) ||
+                (toCheck1.equals(str2) && toCheck1.equals(str1));
+    }
+
 
     private static Map<String, Class> getColumnsToCopy(CyTable src, CyTable dst) {
         Map<String, Class> colsToCopy = new HashMap<>();

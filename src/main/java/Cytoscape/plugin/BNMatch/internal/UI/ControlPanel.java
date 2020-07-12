@@ -1,8 +1,9 @@
-package Cytoscape.plugin.PNMatcher.internal.UI;
+package Cytoscape.plugin.BNMatch.internal.UI;
 
-import Cytoscape.plugin.PNMatcher.internal.Tasks.CombineNetworksTask;
-import Cytoscape.plugin.PNMatcher.internal.Tasks.HGATask;
-import Cytoscape.plugin.PNMatcher.internal.Tasks.PairLayoutTask;
+import Cytoscape.plugin.BNMatch.internal.Tasks.CombineNetworksTask;
+import Cytoscape.plugin.BNMatch.internal.Tasks.HGAInputCheckTask;
+import Cytoscape.plugin.BNMatch.internal.Tasks.HGATask;
+import Cytoscape.plugin.BNMatch.internal.Tasks.PairLayoutTask;
 import net.miginfocom.swing.MigLayout;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -22,14 +23,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 
-import static Cytoscape.plugin.PNMatcher.internal.UI.InputsAndServices.networkManager;
+import static Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices.*;
 
 
 // Define a CytoPanel class
 public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, NetworkAboutToBeDestroyedListener {
     private static final int COMBOMAXLENGTH = 100;
     private final TaskManager taskManager;
-
     // data structures
     // UI components
     private JPanel rootPanel;
@@ -49,6 +49,10 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     private JTextField tolerance;
     private JTextField seqFactor;
     private JCheckBox forcedCheck;
+    private JCheckBox displayOnlyCheckBox;
+    private FileNameExtensionFilter excelFileFilter;
+    private FileNameExtensionFilter txtFileFilter;
+    private JPanel paramsPanel;
 
     public ControlPanel() {
         this.taskManager = InputsAndServices.taskManager;
@@ -77,41 +81,64 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         analyseButton.addActionListener(actionEvent -> {
             setUserInput();
             TaskIterator it = new TaskIterator();
+            HGAInputCheckTask checkTask = new HGAInputCheckTask();
             HGATask hgaTask = new HGATask();
             CombineNetworksTask combineNetworksTask = new CombineNetworksTask();
             PairLayoutTask pairLayoutTask = new PairLayoutTask();
+            it.append(checkTask);
             it.append(hgaTask);
             it.append(combineNetworksTask);
             it.append(pairLayoutTask);
             taskManager.execute(it);
         });
 
+        // check boxes
+        forcedCheck.addActionListener(actionEvent->{
+            force = forcedCheck.isSelected();
+        });
+
+        displayOnlyCheckBox.addActionListener(actionEvent->{
+            onlyDisplay = displayOnlyCheckBox.isSelected();
+            if(onlyDisplay){
+                simMatrixLabel.setText("Your mapping result from the external file");
+                txtFileFilter = new FileNameExtensionFilter("TEXT FIle for your mapping result","txt");
+                simMatrixFileChooser.removeChoosableFileFilter(excelFileFilter);
+                simMatrixFileChooser.setFileFilter(txtFileFilter);
+                for (Component component : paramsPanel.getComponents()) {
+                    component.setEnabled(false);
+                }
+            }
+            else{
+                simMatrixLabel.setText("Similarity matrix for E-value from BLASTP:");
+                txtFileFilter = new FileNameExtensionFilter("TEXT FIle for simMat: local blastp result","txt");
+                simMatrixFileChooser.addChoosableFileFilter(excelFileFilter);
+                simMatrixFileChooser.setFileFilter(txtFileFilter);
+                for (Component component : paramsPanel.getComponents()) {
+                    component.setEnabled(true);
+                }
+            }
+        });
     }
 
     private void setUserInput() {
         // shift all parameters from UI to a specific class to export users's information
         // networks
         // check if there's no networks input
-
         InputsAndServices.indexNetwork = (CyNetwork) indexNetworks.getSelectedItem();
         InputsAndServices.targetNetwork = (CyNetwork) targetNetworks.getSelectedItem();
-        if (InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null) {
-            System.out.println("Both index-network and target-network should be selected.");
-        }
-        InputsAndServices.simMatFile = simMatrixFileChooser.getSelectedFile();
-        if (InputsAndServices.simMatFile == null) {
-            System.out.println("Similarity matrix has been loaded.");
-        }
+        InputsAndServices.InputFile = simMatrixFileChooser.getSelectedFile();
         InputsAndServices.hVal = (double) hValSlider.getValue() / 100;
         InputsAndServices.tol = Double.parseDouble(tolerance.getText());
         InputsAndServices.bF = Double.parseDouble(seqFactor.getText());
+        InputsAndServices.onlyDisplay = displayOnlyCheckBox.isSelected();
+        InputsAndServices.force = forcedCheck.isSelected();
     }
 
     public void init() {
         // get all available networks in the app panel
         indexNetworks = new JComboBox<>();
         targetNetworks = new JComboBox<>();
-
+        displayOnlyCheckBox = new JCheckBox("Only display the result");
         // limit the maxSize to display
         setMax(indexNetworks);
         setMax(targetNetworks);
@@ -134,9 +161,8 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         fileInfoPanel.setBorder(new TitledBorder("Protein sequences and similarity matrix"));
 
         //parameters panel
-        JPanel paramsPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
+        paramsPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
         paramsPanel.setBorder(new TitledBorder("Change the parameters input for HGA"));
-
         simMatrixLabel = new JLabel("Similarity matrix for E-value from BLASTP:");
         simMatrixBrowseButton = new JButton("Browse");
         simMatrixFileChooser = new JFileChooser();
@@ -164,6 +190,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         graphsPanel.add(indexNetworks);
         graphsPanel.add(new JLabel("target network:"));
         graphsPanel.add(targetNetworks);
+        graphsPanel.add(displayOnlyCheckBox,"wrap");
 
         fileInfoPanel.add(simMatrixLabel, "wrap");
         fileInfoPanel.add(simMatrixBrowseButton, "wrap");
@@ -187,16 +214,15 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     }
 
     private void setFileChoosers() {
-        FileNameExtensionFilter faaFileFilter = new FileNameExtensionFilter("" +
+        excelFileFilter = new FileNameExtensionFilter("" +
                 "Excel file for simMat: local blastp result",
-                "xlsx","xls");
-        FileNameExtensionFilter txtFileFilter = new FileNameExtensionFilter("TEXT FIle for simMat: local blastp result",
+                "xlsx", "xls");
+        txtFileFilter = new FileNameExtensionFilter("TEXT FIle for simMat: local blastp result",
                 "txt");
         // fileFormat settings
-
-        simMatrixFileChooser.addChoosableFileFilter(faaFileFilter);
+        simMatrixFileChooser.addChoosableFileFilter(excelFileFilter);
         simMatrixFileChooser.addChoosableFileFilter(txtFileFilter);
-        simMatrixFileChooser.setFileFilter(faaFileFilter);
+        simMatrixFileChooser.setFileFilter(excelFileFilter);
         // init dictionary
         simMatrixFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
     }
@@ -234,7 +260,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
     @Override
     public String getTitle() {
-        return "PNMatcher";
+        return "BNMatch";
     }
 
     @Override

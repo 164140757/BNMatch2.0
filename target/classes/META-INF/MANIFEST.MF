@@ -1,19 +1,19 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1594259799691
+Bnd-LastModified: 1594522854640
 Build-Jdk: 14
 Built-By: Haotian Bai
-Bundle-Activator: Cytoscape.plugin.PNMatcher.internal.CyActivator
+Bundle-Activator: Cytoscape.plugin.BNMatch.internal.CyActivator
 Bundle-ClassPath: .,Algorithms-1.0.jar,jblas-1.2.4.jar,jgrapht-core-1.4.
  0.jar,jheaps-0.11.jar,miglayout-swing-5.2.jar,miglayout-core-5.2.jar,po
  i-4.1.2.jar,commons-codec-1.13.jar,commons-collections4-4.4.jar,commons
  -math3-3.6.1.jar,SparseBitSet-1.2.jar,poi-ooxml-4.1.2.jar,poi-ooxml-sch
  emas-4.1.2.jar,xmlbeans-3.1.0.jar,commons-compress-1.19.jar,curvesapi-1
  .06.jar
-Bundle-Description: PNMatcher provides reliable and optimal mapping betw
- een PPI networks concerning about protein sequences and        topologi
- cal similarity.
+Bundle-Description: BNMatch2 provides a reliable and optimized mapping b
+ etween        biological networks with protein sequence and  topologica
+ l similarity.
 Bundle-ManifestVersion: 2
-Bundle-Name: PNMatcher
+Bundle-Name: BNMatch2
 Bundle-SymbolicName: Cytoscape.plugin
 Bundle-Version: 1.0
 Created-By: Apache Maven Bundle Plugin
@@ -64,45 +64,46 @@ Import-Package: com.github.luben.zstd;resolution:=optional,com.microsoft
  he.batik.ext.awt;resolution:=optional,org.apache.batik.ext.awt.image.re
  nderable;resolution:=optional,org.apache.batik.gvt;resolution:=optional
  ,org.apache.batik.util;resolution:=optional,org.apache.commons.io;resol
- ution:=optional,org.apache.commons.logging;resolution:=optional,org.apa
- che.jcp.xml.dsig.internal.dom;resolution:=optional,org.apache.poi.extra
- ctor.ole2;resolution:=optional,org.apache.tools.ant;resolution:=optiona
- l,org.apache.tools.ant.taskdefs;resolution:=optional,org.apache.tools.a
- nt.types;resolution:=optional,org.apache.xml.resolver;resolution:=optio
- nal,org.apache.xml.resolver.tools;resolution:=optional,org.apache.xml.s
- ecurity;resolution:=optional,org.apache.xml.security.c14n;resolution:=o
- ptional,org.apache.xml.security.signature;resolution:=optional,org.apac
- he.xml.security.utils;resolution:=optional,org.bouncycastle.asn1;resolu
- tion:=optional,org.bouncycastle.asn1.cmp;resolution:=optional,org.bounc
- ycastle.asn1.nist;resolution:=optional,org.bouncycastle.asn1.ocsp;resol
- ution:=optional,org.bouncycastle.asn1.x500;resolution:=optional,org.bou
- ncycastle.asn1.x509;resolution:=optional,org.bouncycastle.cert;resoluti
- on:=optional,org.bouncycastle.cert.jcajce;resolution:=optional,org.boun
- cycastle.cert.ocsp;resolution:=optional,org.bouncycastle.cms;resolution
- :=optional,org.bouncycastle.cms.bc;resolution:=optional,org.bouncycastl
- e.operator;resolution:=optional,org.bouncycastle.operator.bc;resolution
- :=optional,org.bouncycastle.tsp;resolution:=optional,org.bouncycastle.u
- til;resolution:=optional,org.brotli.dec;resolution:=optional,org.cytosc
- ape.application.swing;resolution:=optional;version="[3.7,4)",org.cytosc
- ape.event;resolution:=optional;version="[3.7,4)",org.cytoscape.model;re
- solution:=optional;version="[3.7,4)",org.cytoscape.model.events;resolut
- ion:=optional;version="[3.7,4)",org.cytoscape.service.util;resolution:=
- optional;version="[3.7,4)",org.cytoscape.session;resolution:=optional;v
- ersion="[3.7,4)",org.cytoscape.view.layout;resolution:=optional;version
- ="[3.7,4)",org.cytoscape.view.model;resolution:=optional;version="[3.7,
- 4)",org.cytoscape.view.presentation.property;resolution:=optional;versi
- on="[3.7,4)",org.cytoscape.view.presentation.property.values;resolution
- :=optional;version="[3.7,4)",org.cytoscape.view.vizmap;resolution:=opti
- onal;version="[3.7,4)",org.cytoscape.work;resolution:=optional;version=
- "[3.7,4)",org.cytoscape.work.undo;resolution:=optional;version="[3.7,4)
- ",org.etsi.uri.x01903.v14;resolution:=optional,org.ietf.jgss;resolution
- :=optional,org.openxmlformats.schemas.officeDocument.x2006.math;resolut
- ion:=optional,org.openxmlformats.schemas.schemaLibrary.x2006.main;resol
- ution:=optional,org.osgi.framework;resolution:=optional;version="[1.5,2
- )",org.tukaani.xz;resolution:=optional,org.w3c.dom;resolution:=optional
- ,org.w3c.dom.events;resolution:=optional,org.xml.sax;resolution:=option
- al,org.xml.sax.ext;resolution:=optional,org.xml.sax.helpers;resolution:
- =optional,sun.misc;resolution:=optional
+ ution:=optional,org.apache.commons.logging;resolution:=optional;version
+ ="[1.2,2)",org.apache.jcp.xml.dsig.internal.dom;resolution:=optional,or
+ g.apache.poi.extractor.ole2;resolution:=optional,org.apache.tools.ant;r
+ esolution:=optional,org.apache.tools.ant.taskdefs;resolution:=optional,
+ org.apache.tools.ant.types;resolution:=optional,org.apache.xml.resolver
+ ;resolution:=optional,org.apache.xml.resolver.tools;resolution:=optiona
+ l,org.apache.xml.security;resolution:=optional,org.apache.xml.security.
+ c14n;resolution:=optional,org.apache.xml.security.signature;resolution:
+ =optional,org.apache.xml.security.utils;resolution:=optional,org.bouncy
+ castle.asn1;resolution:=optional,org.bouncycastle.asn1.cmp;resolution:=
+ optional,org.bouncycastle.asn1.nist;resolution:=optional,org.bouncycast
+ le.asn1.ocsp;resolution:=optional,org.bouncycastle.asn1.x500;resolution
+ :=optional,org.bouncycastle.asn1.x509;resolution:=optional,org.bouncyca
+ stle.cert;resolution:=optional,org.bouncycastle.cert.jcajce;resolution:
+ =optional,org.bouncycastle.cert.ocsp;resolution:=optional,org.bouncycas
+ tle.cms;resolution:=optional,org.bouncycastle.cms.bc;resolution:=option
+ al,org.bouncycastle.operator;resolution:=optional,org.bouncycastle.oper
+ ator.bc;resolution:=optional,org.bouncycastle.tsp;resolution:=optional,
+ org.bouncycastle.util;resolution:=optional,org.brotli.dec;resolution:=o
+ ptional,org.cytoscape.application.swing;resolution:=optional;version="[
+ 3.7,4)",org.cytoscape.event;resolution:=optional;version="[3.7,4)",org.
+ cytoscape.model;resolution:=optional;version="[3.7,4)",org.cytoscape.mo
+ del.events;resolution:=optional;version="[3.7,4)",org.cytoscape.service
+ .util;resolution:=optional;version="[3.7,4)",org.cytoscape.session;reso
+ lution:=optional;version="[3.7,4)",org.cytoscape.view.layout;resolution
+ :=optional;version="[3.7,4)",org.cytoscape.view.model;resolution:=optio
+ nal;version="[3.7,4)",org.cytoscape.view.presentation.property;resoluti
+ on:=optional;version="[3.7,4)",org.cytoscape.view.presentation.property
+ .values;resolution:=optional;version="[3.7,4)",org.cytoscape.view.vizma
+ p;resolution:=optional;version="[3.7,4)",org.cytoscape.work;resolution:
+ =optional;version="[3.7,4)",org.cytoscape.work.undo;resolution:=optiona
+ l;version="[3.7,4)",org.etsi.uri.x01903.v14;resolution:=optional,org.ie
+ tf.jgss;resolution:=optional,org.openxmlformats.schemas.officeDocument.
+ x2006.math;resolution:=optional,org.openxmlformats.schemas.schemaLibrar
+ y.x2006.main;resolution:=optional,org.osgi.framework;resolution:=option
+ al;version="[1.5,2)",org.slf4j;resolution:=optional;version="[1.7,2)",o
+ rg.tukaani.xz;resolution:=optional,org.w3c.dom;resolution:=optional,org
+ .w3c.dom.events;resolution:=optional,org.xml.sax;resolution:=optional,o
+ rg.xml.sax.ext;resolution:=optional,org.xml.sax.helpers;resolution:=opt
+ ional,sun.misc;resolution:=optional
 MS: 4.1.2
 Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=11))"
 Tool: Bnd-4.2.0.201903051501

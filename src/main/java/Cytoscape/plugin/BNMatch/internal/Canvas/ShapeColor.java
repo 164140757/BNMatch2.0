@@ -1,4 +1,4 @@
-package Cytoscape.plugin.PNMatcher.internal.Canvas;
+package Cytoscape.plugin.BNMatch.internal.Canvas;
 
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
@@ -16,15 +16,25 @@ public class ShapeColor {
     public static Collection<NodeShape> shapes = new HashSet<>(Arrays.asList(NodeShapeVisualProperty.TRIANGLE,
             NodeShapeVisualProperty.ELLIPSE, NodeShapeVisualProperty.HEXAGON, NodeShapeVisualProperty.OCTAGON,
             NodeShapeVisualProperty.PARALLELOGRAM, NodeShapeVisualProperty.RECTANGLE, NodeShapeVisualProperty.TRIANGLE));
-    private static ArrayList<Pair<Color, NodeShape>> list;
+    private static ArrayList<Pair<Color, NodeShape>> colorShapeList;
+    private static ArrayList<Color> colorList;
 
     public static Pair<Color, NodeShape> randomShapeAndColor(){
         int sum = colors.size()* shapes.size();
         int rand = (int)(Math.random()*sum);
-        if(list == null){
-            list = new ArrayList<>();
-            colors.forEach(c->shapes.forEach(s->list.add(new Pair<>(c, s))));
+        if(colorShapeList == null){
+            colorShapeList = new ArrayList<>();
+            colors.forEach(c->shapes.forEach(s-> colorShapeList.add(new Pair<>(c, s))));
         }
-        return list.get(rand);
+        return colorShapeList.get(rand);
+    }
+    public static Color randomColor(){
+        int sum = colors.size();
+        int rand = (int)(Math.random()*sum);
+        if(colorList == null){
+            colorList = new ArrayList<>();
+            colorList.addAll(colors);
+        }
+        return colorList.get(rand);
     }
 }
