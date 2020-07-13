@@ -17,8 +17,6 @@ public class CombineNetworksTask extends AbstractTask {
     private static final String NETWORK_ID = "NetworkID";
     private static final String NODE_UID = "UID";
     private static final String PAIRED_NODE = "PairedNode";
-    private static final String FROM_NODE = "From";
-    private static final String TO_NODE = "To";
     private final CyNetwork idNet;
     private final CyNetwork tgtNet;
     private final CyNetworkNaming namingUtil;
@@ -56,8 +54,6 @@ public class CombineNetworksTask extends AbstractTask {
         nodeTable.createColumn(NODE_UID, Long.class, true, -1L);
         CyTable edgeTable = res.getDefaultEdgeTable();
         edgeTable.createColumn(NETWORK_ID, Integer.class, false, -1);
-        edgeTable.createColumn(FROM_NODE, String.class, false, "");
-        edgeTable.createColumn(TO_NODE, String.class, false, "");
         // add network to the result view
         old2NewIndex = new HashMap<>();
         old2NewTarget = new HashMap<>();
@@ -75,23 +71,37 @@ public class CombineNetworksTask extends AbstractTask {
         Map<String, Class> edgeCols = getColumnsToCopy(net.getDefaultEdgeTable(), res.getDefaultEdgeTable());
         for (CyNode srcNode : net.getNodeList()) {
             String strNode = net.getRow(srcNode).get(CyNetwork.NAME, String.class);
-            CyNode newNode = res.addNode();
-            CyRow newRow = res.getRow(newNode);
-            newRow.set(NETWORK_ID, netID);
-            newRow.set("name",strNode);
+//            CyNode newNode = res.addNode();
+//            CyRow newRow = res.getRow(newNode);
+            CyNode newNode = null;
+            CyRow newRow = null;
             if (netID == 1) {
+                newNode = res.addNode();
+                newRow = res.getRow(newNode);
+                newRow.set(NETWORK_ID, netID);
+                newRow.set("name", strNode);
                 old2NewIndex.put(srcNode, newNode);
-                newRow.set(PAIRED_NODE, mapping.get(strNode));
-            } else if (netID == 2) {
+
+            } else if (netID == 2 && mapping.containsValue(strNode)) {
+                // only nodes that mapped
+                newNode = res.addNode();
+                newRow = res.getRow(newNode);
+                newRow.set(NETWORK_ID, netID);
+                newRow.set("name", strNode);
                 old2NewTarget.put(srcNode, newNode);
                 newRow.set(PAIRED_NODE, inverseMapping.get(strNode));
+
             }
-            CyRow oldRow = net.getRow(srcNode);
-            for (Map.Entry<String, Class> e : nodeCols.entrySet()) {
-                String key = e.getKey();
-                newRow.set(key, oldRow.get(key, e.getValue()));
+            if(newNode!=null){
+                newRow.set(PAIRED_NODE, mapping.get(strNode));
+                CyRow oldRow = net.getRow(srcNode);
+                for (Map.Entry<String, Class> e : nodeCols.entrySet()) {
+                    String key = e.getKey();
+                    newRow.set(key, oldRow.get(key, e.getValue()));
+                }
             }
         }
+
         for (CyEdge edge : net.getEdgeList()) {
             CyEdge newEdge = null;
             if (netID == 1) {
@@ -99,17 +109,23 @@ public class CombineNetworksTask extends AbstractTask {
                         old2NewIndex.get(edge.getSource()),
                         old2NewIndex.get(edge.getTarget()),
                         edge.isDirected());
-            }else if (netID == 2) {
-                newEdge = res.addEdge(
-                        old2NewTarget.get(edge.getSource()),
-                        old2NewTarget.get(edge.getTarget()),
-                        edge.isDirected());
+            } else if (netID == 2) {
+                boolean b1 = old2NewTarget.containsKey(edge.getSource());
+                boolean b2 = old2NewTarget.containsKey(edge.getTarget());
+                if(b1&&b2){
+                    newEdge = res.addEdge(
+                            old2NewTarget.get(edge.getSource()),
+                            old2NewTarget.get(edge.getTarget()),
+                            edge.isDirected());
+                }
             }
-            CyRow newRow = res.getRow(newEdge);
-            newRow.set(NETWORK_ID, netID);
-            CyRow oldRow = net.getRow(edge);
-            for (Map.Entry<String, Class> e : edgeCols.entrySet()) {
-                newRow.set(e.getKey(), oldRow.get(e.getKey(), e.getValue()));
+            if(newEdge!=null){
+                CyRow newRow = res.getRow(newEdge);
+                newRow.set(NETWORK_ID, netID);
+                CyRow oldRow = net.getRow(edge);
+                for (Map.Entry<String, Class> e : edgeCols.entrySet()) {
+                    newRow.set(e.getKey(), oldRow.get(e.getKey(), e.getValue()));
+                }
             }
         }
     }
@@ -128,35 +144,36 @@ public class CombineNetworksTask extends AbstractTask {
                 n -> {
                     String strNode = idNet.getRow(n).get(CyNetwork.NAME, String.class);
                     CyNode tgtNode = tgtMap.get(mapping.get(strNode));
-                    AlignmentTaskData.cyNodeMapping.put(old2NewIndex.get(n),tgtNode);
+                    AlignmentTaskData.cyNodeMapping.put(old2NewIndex.get(n), tgtNode);
                 }
         );
         // edges
-        HashMap<Edge,CyEdge> map1 = new HashMap<>();
-        HashMap<Edge,CyEdge> map2 = new HashMap<>();
+        HashMap<Edge, CyEdge> map1 = new HashMap<>();
+        HashMap<Edge, CyEdge> map2 = new HashMap<>();
         res.getEdgeList().forEach(
                 cyEdge -> {
                     CyNode n1 = cyEdge.getSource();
                     CyNode n2 = cyEdge.getTarget();
                     String str1 = res.getRow(n1).get(CyNetwork.NAME, String.class);
                     String str2 = res.getRow(n2).get(CyNetwork.NAME, String.class);
-                    int netNum1 = res.getRow(n1).get(NETWORK_ID,Integer.class);
-                    int netNum2 = res.getRow(n2).get(NETWORK_ID,Integer.class);
-                    Edge edge = new Edge(str1,str2);
-                    if(netNum1 == 1 && netNum2 == 1 ){
-                        map1.put(edge,cyEdge);
+                    int netNum1 = res.getRow(n1).get(NETWORK_ID, Integer.class);
+                    int netNum2 = res.getRow(n2).get(NETWORK_ID, Integer.class);
+                    Edge edge = new Edge(str1, str2);
+                    if (netNum1 == 1 && netNum2 == 1) {
+                        map1.put(edge, cyEdge);
                     }
-                    if(netNum1 == 2 && netNum2 == 2 ){
-                        map2.put(edge,cyEdge);
+                    if (netNum1 == 2 && netNum2 == 2) {
+                        map2.put(edge, cyEdge);
                     }
                 }
         );
-        AlignmentTaskData.edgeCyEdgeMap1= map1;
-        AlignmentTaskData.edgeCyEdgeMap2= map2;
+        AlignmentTaskData.edgeCyEdgeMap1 = map1;
+        AlignmentTaskData.edgeCyEdgeMap2 = map2;
 
         AlignmentTaskData.indexOldToNew = old2NewIndex;
         AlignmentTaskData.targetOldToNew = old2NewTarget;
     }
+
     /**
      * Whether the edge contains node str1 and str2
      */

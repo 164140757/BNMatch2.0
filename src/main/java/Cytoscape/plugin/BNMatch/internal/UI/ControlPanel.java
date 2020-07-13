@@ -38,7 +38,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     private JComboBox<CyNetwork> targetNetworks;
 
     private JButton simMatrixBrowseButton;
-    private JButton analyseButton;
+    private JButton analyzeButton;
 
     private JLabel hVal;
     private JFileChooser simMatrixFileChooser;
@@ -69,7 +69,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             int status = simMatrixFileChooser.showOpenDialog(null);
             if (status == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = simMatrixFileChooser.getSelectedFile();
-                simMatrixLabel.setText(simMatrixLabel.getText() + selectedFile.getName());
+                simMatrixLabel.setText(selectedFile.getName());
             }
         });
         hValSlider.addChangeListener(actionEvent -> {
@@ -78,7 +78,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         });
 
         // analyseButton settings
-        analyseButton.addActionListener(actionEvent -> {
+        analyzeButton.addActionListener(actionEvent -> {
             setUserInput();
             TaskIterator it = new TaskIterator();
             HGAInputCheckTask checkTask = new HGAInputCheckTask();
@@ -158,7 +158,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
         // sequences panel components initialization
         JPanel fileInfoPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
-        fileInfoPanel.setBorder(new TitledBorder("Protein sequences and similarity matrix"));
+        fileInfoPanel.setBorder(new TitledBorder("Similarity matrix"));
 
         //parameters panel
         paramsPanel = new JPanel(new MigLayout("wrap 2", "grow", "grow"));
@@ -181,7 +181,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         seqFactor = new JTextField("0.5");
 
         // analysis button
-        analyseButton = new JButton("Analyse");
+        analyzeButton = new JButton("Analyze");
         // fileChoosers settings
         setFileChoosers();
 
@@ -209,7 +209,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         rootPanel.add(graphsPanel, "grow");
         rootPanel.add(fileInfoPanel, "grow");
         rootPanel.add(paramsPanel, "grow");
-        rootPanel.add(analyseButton, "center");
+        rootPanel.add(analyzeButton, "center");
 
     }
 
