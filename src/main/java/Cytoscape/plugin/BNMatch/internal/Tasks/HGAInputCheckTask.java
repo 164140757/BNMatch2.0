@@ -60,7 +60,7 @@ public class HGAInputCheckTask extends AbstractTask {
             HGA.log = false;
             // check
             if (!simMat.getRowSet().containsAll(indNet.getAllNodes()) || !simMat.getColSet().containsAll(tgtNet.getAllNodes())) {
-                taskMonitor.setTitle("Load Error!The similarity file doesn't contain all nodes in the graphs you have selected.");
+                taskMonitor.setTitle("Load Error! The similarity file doesn't contain all nodes in the graphs you have selected.");
                 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"Input error.");
                 InputsAndServices.logger.error("The similarity file doesn't contain all nodes in the graphs you have selected.");
                 return;
@@ -74,9 +74,9 @@ public class HGAInputCheckTask extends AbstractTask {
             // check
             if (!indNet.getAllNodes().containsAll(InputsAndServices.mapping.keySet()) ||
                     !tgtNet.getAllNodes().containsAll(InputsAndServices.mapping.values())) {
-                taskMonitor.setTitle("Load Error!Your mapping file input have conflicts with your graphs selected. Please check again.");
+                taskMonitor.setTitle("Load Error! Your mapping file input havs conflicts with your graphs selected. Please check again.");
                 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"Input error.");
-                InputsAndServices.logger.error("Your mapping file input have conflicts with your graphs selected. Please check again.");
+                InputsAndServices.logger.error("Your mapping file input havs conflicts with your graphs selected. Please check again.");
                 return;
             }
         }

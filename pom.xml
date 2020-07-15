@@ -7,7 +7,7 @@
     <properties>
         <bundle.symbolicName>Cytoscape.plugin</bundle.symbolicName>
         <bundle.namespace>Cytoscape.plugin.BNMatch.internal</bundle.namespace>
-        <project.version>1.0</project.version>
+        <project.version>1.1</project.version>
         <!--dependencies version-->
         <jblas.version>1.2.4</jblas.version>
         <cytoscape.api.version>3.7.0</cytoscape.api.version>
@@ -23,7 +23,7 @@
     <groupId>Cytoscape.plugin.BNMatch</groupId>
     <artifactId>BNMatch2</artifactId>
     <packaging>bundle</packaging>
-    <version>1.0</version>
+    <version>1.1</version>
     <description>
         BNMatch2 provides a reliable and optimized mapping between
         biological networks with protein sequence and  topological similarity.

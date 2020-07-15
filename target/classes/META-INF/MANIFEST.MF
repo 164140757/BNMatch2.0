@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1594625572536
+Bnd-LastModified: 1594775061330
 Build-Jdk: 14
 Built-By: Haotian Bai
 Bundle-Activator: Cytoscape.plugin.BNMatch.internal.CyActivator
@@ -15,7 +15,7 @@ Bundle-Description: BNMatch2 provides a reliable and optimized mapping b
 Bundle-ManifestVersion: 2
 Bundle-Name: BNMatch2
 Bundle-SymbolicName: Cytoscape.plugin
-Bundle-Version: 1.0
+Bundle-Version: 1.1
 Created-By: Apache Maven Bundle Plugin
 Embed-Dependency: * ;scope=!provided|test; groupId=!org.cytoscape
 Embed-Transitive: true
