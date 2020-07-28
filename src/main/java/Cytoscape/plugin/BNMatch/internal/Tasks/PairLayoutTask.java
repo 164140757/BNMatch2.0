@@ -155,6 +155,7 @@ public class PairLayoutTask extends AbstractTask {
 
         view.fitContent();
         view.updateView();
+        view.fitSelected();
         viewManager.addNetworkView(view, true);
         eventHelper.flushPayloadEvents();
     }

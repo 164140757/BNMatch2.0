@@ -56,8 +56,6 @@ public class HGAInputCheckTask extends AbstractTask {
                 InputsAndServices.logger.error("Your excel file is not xls or xlsx.");
                 return;
             }
-            HGA.debugOut = false;
-            HGA.log = false;
             // check
             if (!simMat.getRowSet().containsAll(indNet.getAllNodes()) || !simMat.getColSet().containsAll(tgtNet.getAllNodes())) {
                 taskMonitor.setTitle("Load Error! The similarity file doesn't contain all nodes in the graphs you have selected.");

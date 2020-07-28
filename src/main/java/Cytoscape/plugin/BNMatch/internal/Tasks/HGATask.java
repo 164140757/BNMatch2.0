@@ -47,11 +47,13 @@ public class HGATask extends AbstractTask {
         UndirectedGraph tgtNet = InputsAndServices.tgtNet;
         // HGA
         try {
-
             if(!InputsAndServices.onlyDisplay){
                 HGA hga = new HGA(simMat, indNet, tgtNet,
                         InputsAndServices.bF, InputsAndServices.force,
                         InputsAndServices.hVal, InputsAndServices.tol);
+                HGA.debugOut = false;
+                HGA.log = false;
+                HGA.GPU = InputsAndServices.GPU;
                 hga.run();
                 // score
                 AlignmentTaskData.EC = hga.getEC_res();

@@ -50,6 +50,8 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     private JTextField seqFactor;
     private JCheckBox forcedCheck;
     private JCheckBox displayOnlyCheckBox;
+    private JCheckBox GPUCheckBox;
+
     private FileNameExtensionFilter excelFileFilter;
     private FileNameExtensionFilter txtFileFilter;
     private JPanel paramsPanel;
@@ -107,6 +109,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
                 for (Component component : paramsPanel.getComponents()) {
                     component.setEnabled(false);
                 }
+                GPUCheckBox.setEnabled(false);
             }
             else{
                 simMatrixLabel.setText("Similarity matrix for E-value from BLASTP:");
@@ -116,7 +119,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
                 for (Component component : paramsPanel.getComponents()) {
                     component.setEnabled(true);
                 }
+                GPUCheckBox.setEnabled(true);
             }
+        });
+
+        GPUCheckBox.addActionListener(actionEvent->{
+            GPU = GPUCheckBox.isSelected();
         });
     }
 
@@ -131,6 +139,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         InputsAndServices.tol = Double.parseDouble(tolerance.getText());
         InputsAndServices.bF = Double.parseDouble(seqFactor.getText());
         InputsAndServices.onlyDisplay = displayOnlyCheckBox.isSelected();
+        InputsAndServices.GPU = GPUCheckBox.isSelected();
         InputsAndServices.force = forcedCheck.isSelected();
     }
 
@@ -139,6 +148,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         indexNetworks = new JComboBox<>();
         targetNetworks = new JComboBox<>();
         displayOnlyCheckBox = new JCheckBox("Only display the result");
+        GPUCheckBox = new JCheckBox("GPU acceleration");
         // limit the maxSize to display
         setMax(indexNetworks);
         setMax(targetNetworks);
@@ -190,7 +200,8 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         graphsPanel.add(indexNetworks);
         graphsPanel.add(new JLabel("target network:"));
         graphsPanel.add(targetNetworks);
-        graphsPanel.add(displayOnlyCheckBox,"wrap");
+        graphsPanel.add(displayOnlyCheckBox);
+        graphsPanel.add(GPUCheckBox,"wrap");
 
         fileInfoPanel.add(simMatrixLabel, "wrap");
         fileInfoPanel.add(simMatrixBrowseButton, "wrap");
@@ -215,8 +226,8 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
 
     private void setFileChoosers() {
         excelFileFilter = new FileNameExtensionFilter("" +
-                "Excel file for simMat: local blastp result",
-                "xlsx", "xls");
+                "Excel file or text file for simMat: local blastp result",
+                "xlsx", "xls","txt");
         txtFileFilter = new FileNameExtensionFilter("TEXT FIle for simMat: local blastp result",
                 "txt");
         // fileFormat settings

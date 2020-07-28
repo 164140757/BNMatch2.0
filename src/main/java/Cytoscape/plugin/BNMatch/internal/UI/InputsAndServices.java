@@ -52,6 +52,7 @@ public final class InputsAndServices {
     public static UndirectedGraph indNet;
     public static UndirectedGraph tgtNet;
     public static boolean onlyDisplay;
+    public static boolean GPU;
     public static HashMap<String, String> mapping;
 
     public static void initServices() {
