@@ -22,8 +22,6 @@ public class HGAInputCheckTask extends AbstractTask {
 
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
-        // shift all parameters from UI to a specific class to export users's information
-        // networks
         // check if there's no networks input
         if (InputsAndServices.indexNetwork == null || InputsAndServices.targetNetwork == null) {
             taskMonitor.setTitle("Load Error! Please select your graphs.");
