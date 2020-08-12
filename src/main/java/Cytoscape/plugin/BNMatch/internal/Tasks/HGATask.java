@@ -9,18 +9,18 @@
 package Cytoscape.plugin.BNMatch.internal.Tasks;
 
 
+import Algorithms.Graph.HGA.HGA;
 import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
-import Internal.Algorithms.Graph.HGA.HGA;
-import Internal.Algorithms.Graph.Network.Node;
-import Internal.Algorithms.Graph.Utils.AdjList.DirectedGraph;
-import Internal.Algorithms.Graph.Utils.AdjList.UndirectedGraph;
-import Internal.Algorithms.Graph.Utils.SimMat;
+import DS.Matrix.SimMat;
+import DS.Network.UndirectedGraph;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,49 +40,44 @@ public class HGATask extends AbstractTask {
         this.ntf = InputsAndServices.networkFactory;
     }
 
-    public void run(TaskMonitor monitor) {
+    public void run(TaskMonitor monitor) throws IOException {
         monitor.setStatusMessage("HGA mapping");
-        SimMat simMat = InputsAndServices.siMat;
-        UndirectedGraph indNet = InputsAndServices.indNet;
-        UndirectedGraph tgtNet = InputsAndServices.tgtNet;
+        SimMat<String> simMat = InputsAndServices.siMat;
+        UndirectedGraph<String, DefaultWeightedEdge> indNet = InputsAndServices.indNet;
+        UndirectedGraph<String, DefaultWeightedEdge> tgtNet = InputsAndServices.tgtNet;
+        HGA.debugOut = false;
+        HGA<String, DefaultWeightedEdge> hga = new HGA<>(simMat, indNet, tgtNet,
+                InputsAndServices.bF, InputsAndServices.force,
+                InputsAndServices.hVal, InputsAndServices.tol);
         // HGA
-        try {
-            if(!InputsAndServices.onlyDisplay){
-                HGA hga = new HGA(simMat, indNet, tgtNet,
-                        InputsAndServices.bF, InputsAndServices.force,
-                        InputsAndServices.hVal, InputsAndServices.tol);
-                HGA.debugOut = false;
-                HGA.log = false;
-                HGA.GPU = InputsAndServices.GPU;
-                hga.run();
-                // score
-                AlignmentTaskData.EC = hga.getEC_res();
-                AlignmentTaskData.ES = hga.getES_res();
-                AlignmentTaskData.PE = hga.getPE_res();
-                AlignmentTaskData.PS = hga.getPS_res();
-                AlignmentTaskData.score = hga.getScore_res();
-                setupMapping(hga.getMappingResult());
-                // mapping edges
-                AlignmentTaskData.mappingEdges = hga.getMappingEdges();
-                InputsAndServices.logger.info("Mapping finished!After " + hga.getIter_res() + "times. " + "\nEC = " + hga.getEC_res() +
-                        ", ES = " + hga.getES() + ", PE = " + hga.getPE() + ", PS = " + hga.getPS_res() + ", Total score = "
-                        + hga.getScore());
-            }
-            else{
-                HGA.setUdG1(InputsAndServices.indNet);
-                HGA.setUdG2(InputsAndServices.tgtNet);
-                HGA.setEC(InputsAndServices.mapping);
-                AlignmentTaskData.EC = HGA.EC;
-                setupMapping(InputsAndServices.mapping);
-                // mapping edges
-                AlignmentTaskData.mappingEdges = HGA.mappingEdges;
-                InputsAndServices.logger.info("Load your mapping and the Edge correctness is:" + "\nEC = " + HGA.EC);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!InputsAndServices.onlyDisplay) {
+            HGA.GPU = InputsAndServices.GPU;
+            hga.run();
+            // score
+            AlignmentTaskData.EC = hga.getEC_res();
+            AlignmentTaskData.ES = hga.getES_res();
+            AlignmentTaskData.PE = hga.getPE_res();
+            AlignmentTaskData.PS = hga.getPS_res();
+            AlignmentTaskData.score = hga.getScore_res();
+            setupMapping(hga.getMappingResult());
+            // mapping edges
+            AlignmentTaskData.mappingEdges = hga.getMappingEdges();
+            InputsAndServices.logger.info("Mapping finished!After " + hga.getIter_res() + "times. " + "\nEC = " + hga.getEC_res() +
+                    ", ES = " + hga.getES() + ", PE = " + hga.getPE() + ", PS = " + hga.getPS_res() + ", Total score = "
+                    + hga.getScore());
+        } else {
+            hga.setUdG1(InputsAndServices.indNet);
+            hga.setUdG2(InputsAndServices.tgtNet);
+            hga.setEC(InputsAndServices.mapping);
+            AlignmentTaskData.EC = hga.getEC();
+            setupMapping(InputsAndServices.mapping);
+            // mapping edges
+            AlignmentTaskData.mappingEdges = hga.getMappingEdges();
+            InputsAndServices.logger.info("Load your mapping and the Edge correctness is:" + "\nEC = " + hga.getEC());
         }
+
     }
+
 
     private void setupMapping(HashMap<String, String> mappingResult) {
         // name to UID
@@ -99,42 +94,23 @@ public class HGATask extends AbstractTask {
     }
 
 
-    public static UndirectedGraph convert(CyNetwork network) {
+    public static UndirectedGraph<String, DefaultWeightedEdge> convert(CyNetwork network) {
         assert network != null;
-        UndirectedGraph out = new UndirectedGraph();
-        Map<Long, Node> nodeMap = new HashMap<>();
+        UndirectedGraph<String, DefaultWeightedEdge> out = new UndirectedGraph<>(DefaultWeightedEdge.class);
+        Map<Long, String> nodeMap = new HashMap<>();
         // get nodes map
         for (CyNode cynode : network.getNodeList()) {
             String nName = network.getRow(cynode).get(CyNetwork.NAME, String.class);
-            Node node = new Node(nName);
-            nodeMap.put(cynode.getSUID(), node);
+            nodeMap.put(cynode.getSUID(), nName);
         }
-        HashSet<String> nodes1 = new HashSet<>();
-        HashSet<String> nodes2 = new HashSet<>();
         // add edge
         for (CyEdge cyedge : network.getEdgeList()) {
-            Node source = nodeMap.get(cyedge.getSource().getSUID());
-            Node target = nodeMap.get(cyedge.getTarget().getSUID());
-            out.addOneNode(source.getStrName(), target.getStrName(), 0);
-            nodes1.add(source.getStrName());
-            nodes2.add(target.getStrName());
+            String source = nodeMap.get(cyedge.getSource().getSUID());
+            String target = nodeMap.get(cyedge.getTarget().getSUID());
+            out.addVertex(source);
+            out.addVertex(target);
+            out.addEdge(source, target);
         }
-        out.setRowSet(nodes1);
-        out.setColSet(nodes2);
-        return out;
-    }
-
-    public CyNetwork convert(UndirectedGraph network) {
-        assert network != null;
-        DirectedGraph graph = network.toDirect();
-        CyNetwork out = ntf.createNetwork();
-        graph.parallelStream().forEach(h -> h.forEach(n -> {
-            CyNode node1 = out.addNode();
-            CyNode node2 = out.addNode();
-            out.getDefaultNodeTable().getRow(node1.getSUID()).set("name", h.signName);
-            out.getDefaultNodeTable().getRow(node2.getSUID()).set("name", n.getStrName());
-            out.addEdge(node1, node2, false);
-        }));
         return out;
     }
 

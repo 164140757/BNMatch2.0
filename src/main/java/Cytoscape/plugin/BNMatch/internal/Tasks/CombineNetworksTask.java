@@ -1,12 +1,11 @@
 package Cytoscape.plugin.BNMatch.internal.Tasks;
 
 import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
-import Internal.Algorithms.Graph.Network.Edge;
 import org.cytoscape.model.*;
 import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
-import org.jgrapht.alg.util.Pair;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.*;
 
@@ -148,8 +147,8 @@ public class CombineNetworksTask extends AbstractTask {
                 }
         );
         // edges
-        HashMap<Edge, CyEdge> map1 = new HashMap<>();
-        HashMap<Edge, CyEdge> map2 = new HashMap<>();
+        HashMap<DefaultWeightedEdge, CyEdge> map1 = new HashMap<>();
+        HashMap<DefaultWeightedEdge, CyEdge> map2 = new HashMap<>();
         res.getEdgeList().forEach(
                 cyEdge -> {
                     CyNode n1 = cyEdge.getSource();
@@ -158,12 +157,11 @@ public class CombineNetworksTask extends AbstractTask {
                     String str2 = res.getRow(n2).get(CyNetwork.NAME, String.class);
                     int netNum1 = res.getRow(n1).get(NETWORK_ID, Integer.class);
                     int netNum2 = res.getRow(n2).get(NETWORK_ID, Integer.class);
-                    Edge edge = new Edge(str1, str2);
                     if (netNum1 == 1 && netNum2 == 1) {
-                        map1.put(edge, cyEdge);
+                        map1.put(InputsAndServices.indNet.getEdge(str1,str2), cyEdge);
                     }
                     if (netNum1 == 2 && netNum2 == 2) {
-                        map2.put(edge, cyEdge);
+                        map2.put(InputsAndServices.tgtNet.getEdge(str1,str2), cyEdge);
                     }
                 }
         );
@@ -172,17 +170,6 @@ public class CombineNetworksTask extends AbstractTask {
 
         AlignmentTaskData.indexOldToNew = old2NewIndex;
         AlignmentTaskData.targetOldToNew = old2NewTarget;
-    }
-
-    /**
-     * Whether the edge contains node str1 and str2
-     */
-    private boolean checkEdge(Edge edge, String str1, String str2) {
-        String toCheck1 = edge.getSource().getStrName();
-        String toCheck2 = edge.getTarget().getStrName();
-        // undirected
-        return (toCheck1.equals(str1) && toCheck2.equals(str2)) ||
-                (toCheck1.equals(str2) && toCheck1.equals(str1));
     }
 
 

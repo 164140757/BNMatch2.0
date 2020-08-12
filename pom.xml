@@ -9,13 +9,13 @@
         <bundle.namespace>Cytoscape.plugin.BNMatch.internal</bundle.namespace>
         <project.version>1.2</project.version>
         <!--dependencies version-->
-        <jblas.version>1.2.4</jblas.version>
         <cytoscape.api.version>3.7.0</cytoscape.api.version>
+        <ejml.version>0.39</ejml.version>
         <osgi.api.version>4.2.0</osgi.api.version>
         <maven-bundle-plugin.version>4.2.1</maven-bundle-plugin.version>
         <miglayout.version>5.2</miglayout.version>
         <swingx.version>1.6.1</swingx.version>
-        <jgrapht.core.version>1.4.0</jgrapht.core.version>
+        <jgrapht.core.version>1.5.0</jgrapht.core.version>
         <MS>4.1.2</MS>
         <aparapi.version>2.0.0</aparapi.version>
         <commons-lang3.version>3.11</commons-lang3.version>
@@ -25,10 +25,10 @@
     <groupId>Cytoscape.plugin.BNMatch</groupId>
     <artifactId>BNMatch2</artifactId>
     <packaging>bundle</packaging>
-    <version>1.2</version>
+    <version>1.3</version>
     <description>
         BNMatch2 provides a reliable and optimized mapping between
-        biological networks with protein sequence and  topological similarity.
+       networks with protein sequence and  topological similarity.
     </description>
     <name>BNMatch2</name>
 
@@ -117,10 +117,9 @@
         </dependency>
         <!-- java linear algebra lib for algorithms building -->
         <dependency>
-            <groupId>org.jblas</groupId>
-            <artifactId>jblas</artifactId>
-            <version>${jblas.version}</version>
-            <optional>true</optional>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-all</artifactId>
+            <version>${ejml.version}</version>
         </dependency>
         <!--network data structure base-->
         <dependency>

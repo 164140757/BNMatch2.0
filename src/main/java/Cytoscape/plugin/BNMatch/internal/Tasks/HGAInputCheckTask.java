@@ -1,14 +1,15 @@
 package Cytoscape.plugin.BNMatch.internal.Tasks;
 
 import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
-import Internal.Algorithms.Graph.HGA.HGA;
-import Internal.Algorithms.Graph.Utils.AdjList.UndirectedGraph;
-import Internal.Algorithms.Graph.Utils.SimMat;
-import Internal.Algorithms.IO.GraphFileReader;
-import Internal.Algorithms.IO.MappingResultReader;
+import DS.Matrix.SimMat;
+import DS.Network.UndirectedGraph;
+import IO.GraphFileReader;
+import IO.MappingResultReader;
+import IO.SimMatReader;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.io.File;
 
@@ -39,17 +40,19 @@ public class HGAInputCheckTask extends AbstractTask {
         CyNetwork indexNetwork = InputsAndServices.indexNetwork;
         CyNetwork targetNetwork = InputsAndServices.targetNetwork;
         File inputFile = InputsAndServices.InputFile;
-        UndirectedGraph indNet = convert(indexNetwork);
-        UndirectedGraph tgtNet = convert(targetNetwork);
+        InputsAndServices.indNet = convert(indexNetwork);
+        InputsAndServices.tgtNet = convert(targetNetwork);
+        UndirectedGraph<String, DefaultWeightedEdge> indNet = InputsAndServices.indNet;
+        UndirectedGraph<String, DefaultWeightedEdge> tgtNet = InputsAndServices.tgtNet;
         String[] strArray = InputsAndServices.InputFile.getName().split("\\.");
         String format = strArray[strArray.length - 1];
-        SimMat simMat;
+        SimMat<String> simMat;
         if(!InputsAndServices.onlyDisplay){
-            GraphFileReader reader = new GraphFileReader(true, false, false);
+            SimMatReader<String> reader = new SimMatReader<>(indNet.vertexSet(),tgtNet.vertexSet(),String.class);
             if (format.equals("txt")) {
-                simMat = reader.readToSimMat(inputFile, indNet.getAllNodes(), tgtNet.getAllNodes(), true);
+                simMat = reader.readToSimMat(inputFile.getAbsolutePath(),true);
             } else if (format.equals("xlsx") || format.equals("xls")) {
-                simMat = reader.readToSimMatExcel(inputFile, indNet.getAllNodes(), tgtNet.getAllNodes());
+                simMat = reader.readToSimMatExcel(inputFile.getAbsolutePath());
             } else {
                 taskMonitor.setTitle("Load Error! Please check your excel file format which should have be xls or xlsx");
                 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"Input error.");
@@ -57,7 +60,7 @@ public class HGAInputCheckTask extends AbstractTask {
                 return;
             }
             // check
-            if (!simMat.getRowSet().containsAll(indNet.getAllNodes()) || !simMat.getColSet().containsAll(tgtNet.getAllNodes())) {
+            if (!simMat.getRowSet().containsAll(indNet.vertexSet()) || !simMat.getColSet().containsAll(tgtNet.vertexSet())) {
                 taskMonitor.setTitle("Load Error! The similarity file doesn't contain all nodes in the graphs you have selected.");
                 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"Input error.");
                 InputsAndServices.logger.error("The similarity file doesn't contain all nodes in the graphs you have selected.");
@@ -66,15 +69,14 @@ public class HGAInputCheckTask extends AbstractTask {
             InputsAndServices.siMat = simMat;
         }
         else{
-
             MappingResultReader reader = new MappingResultReader(inputFile.getAbsolutePath());
             InputsAndServices.mapping = reader.getMapping();
             // check
-            if (!indNet.getAllNodes().containsAll(InputsAndServices.mapping.keySet()) ||
-                    !tgtNet.getAllNodes().containsAll(InputsAndServices.mapping.values())) {
-                taskMonitor.setTitle("Load Error! Your mapping file input havs conflicts with your graphs selected. Please check again.");
+            if (!indNet.vertexSet().containsAll(InputsAndServices.mapping.keySet()) ||
+                    !tgtNet.vertexSet().containsAll(InputsAndServices.mapping.values())) {
+                taskMonitor.setTitle("Load Error! Your mapping file input has conflicts with your graphs selected. Please check again.");
                 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"Input error.");
-                InputsAndServices.logger.error("Your mapping file input havs conflicts with your graphs selected. Please check again.");
+                InputsAndServices.logger.error("Your mapping file input has conflicts with your graphs selected. Please check again.");
                 return;
             }
         }

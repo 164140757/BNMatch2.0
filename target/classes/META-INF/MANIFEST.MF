@@ -1,45 +1,56 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1595919479506
+Bnd-LastModified: 1597215834739
 Build-Jdk: 14
 Built-By: Haotian Bai
 Bundle-Activator: Cytoscape.plugin.BNMatch.internal.CyActivator
-Bundle-ClassPath: .,Algorithms-1.0.jar,jblas-1.2.4.jar,jgrapht-core-1.4.
- 0.jar,jheaps-0.11.jar,miglayout-swing-5.2.jar,miglayout-core-5.2.jar,ap
- arapi-2.0.0.jar,aparapi-jni-1.4.2.jar,bcel-6.4.1.jar,scala-library-2.13
- .1.jar,commons-lang3-3.11.jar,poi-4.1.2.jar,commons-codec-1.13.jar,comm
- ons-collections4-4.4.jar,commons-math3-3.6.1.jar,SparseBitSet-1.2.jar,p
- oi-ooxml-4.1.2.jar,poi-ooxml-schemas-4.1.2.jar,xmlbeans-3.1.0.jar,commo
- ns-compress-1.19.jar,curvesapi-1.06.jar
+Bundle-ClassPath: .,Algorithms-1.0.jar,ejml-all-0.39.jar,jsr305-3.0.2.ja
+ r,ejml-core-0.39.jar,ejml-fdense-0.39.jar,ejml-ddense-0.39.jar,ejml-cde
+ nse-0.39.jar,ejml-zdense-0.39.jar,ejml-dsparse-0.39.jar,ejml-simple-0.3
+ 9.jar,ejml-fsparse-0.39.jar,jgrapht-core-1.5.0.jar,jheaps-0.13.jar,migl
+ ayout-swing-5.2.jar,miglayout-core-5.2.jar,aparapi-2.0.0.jar,aparapi-jn
+ i-1.4.2.jar,bcel-6.4.1.jar,scala-library-2.13.1.jar,commons-lang3-3.11.
+ jar,poi-4.1.2.jar,commons-codec-1.13.jar,commons-collections4-4.4.jar,c
+ ommons-math3-3.6.1.jar,SparseBitSet-1.2.jar,poi-ooxml-4.1.2.jar,poi-oox
+ ml-schemas-4.1.2.jar,xmlbeans-3.1.0.jar,commons-compress-1.19.jar,curve
+ sapi-1.06.jar
 Bundle-Description: BNMatch2 provides a reliable and optimized mapping b
- etween        biological networks with protein sequence and  topologica
- l similarity.
+ etween       networks with protein sequence and  topological similarity
+ .
 Bundle-ManifestVersion: 2
 Bundle-Name: BNMatch2
 Bundle-SymbolicName: Cytoscape.plugin
-Bundle-Version: 1.2
+Bundle-Version: 1.3
 Created-By: Apache Maven Bundle Plugin
 Embed-Dependency: * ;scope=!provided|test; groupId=!org.cytoscape
 Embed-Transitive: true
-Embedded-Artifacts: Algorithms-1.0.jar;g="BHT";a="Algorithms";v="1.0",jb
- las-1.2.4.jar;g="org.jblas";a="jblas";v="1.2.4",jgrapht-core-1.4.0.jar;
- g="org.jgrapht";a="jgrapht-core";v="1.4.0",jheaps-0.11.jar;g="org.jheap
- s";a="jheaps";v="0.11",miglayout-swing-5.2.jar;g="com.miglayout";a="mig
- layout-swing";v="5.2",miglayout-core-5.2.jar;g="com.miglayout";a="migla
- yout-core";v="5.2",aparapi-2.0.0.jar;g="com.aparapi";a="aparapi";v="2.0
- .0",aparapi-jni-1.4.2.jar;g="com.aparapi";a="aparapi-jni";v="1.4.2",bce
- l-6.4.1.jar;g="org.apache.bcel";a="bcel";v="6.4.1",scala-library-2.13.1
- .jar;g="org.scala-lang";a="scala-library";v="2.13.1",commons-lang3-3.11
- .jar;g="org.apache.commons";a="commons-lang3";v="3.11",poi-4.1.2.jar;g=
- "org.apache.poi";a="poi";v="4.1.2",commons-codec-1.13.jar;g="commons-co
- dec";a="commons-codec";v="1.13",commons-collections4-4.4.jar;g="org.apa
- che.commons";a="commons-collections4";v="4.4",commons-math3-3.6.1.jar;g
- ="org.apache.commons";a="commons-math3";v="3.6.1",SparseBitSet-1.2.jar;
- g="com.zaxxer";a="SparseBitSet";v="1.2",poi-ooxml-4.1.2.jar;g="org.apac
- he.poi";a="poi-ooxml";v="4.1.2",poi-ooxml-schemas-4.1.2.jar;g="org.apac
- he.poi";a="poi-ooxml-schemas";v="4.1.2",xmlbeans-3.1.0.jar;g="org.apach
- e.xmlbeans";a="xmlbeans";v="3.1.0",commons-compress-1.19.jar;g="org.apa
- che.commons";a="commons-compress";v="1.19",curvesapi-1.06.jar;g="com.gi
- thub.virtuald";a="curvesapi";v="1.06"
+Embedded-Artifacts: Algorithms-1.0.jar;g="BHT";a="Algorithms";v="1.0",ej
+ ml-all-0.39.jar;g="org.ejml";a="ejml-all";v="0.39",jsr305-3.0.2.jar;g="
+ com.google.code.findbugs";a="jsr305";v="3.0.2",ejml-core-0.39.jar;g="or
+ g.ejml";a="ejml-core";v="0.39",ejml-fdense-0.39.jar;g="org.ejml";a="ejm
+ l-fdense";v="0.39",ejml-ddense-0.39.jar;g="org.ejml";a="ejml-ddense";v=
+ "0.39",ejml-cdense-0.39.jar;g="org.ejml";a="ejml-cdense";v="0.39",ejml-
+ zdense-0.39.jar;g="org.ejml";a="ejml-zdense";v="0.39",ejml-dsparse-0.39
+ .jar;g="org.ejml";a="ejml-dsparse";v="0.39",ejml-simple-0.39.jar;g="org
+ .ejml";a="ejml-simple";v="0.39",ejml-fsparse-0.39.jar;g="org.ejml";a="e
+ jml-fsparse";v="0.39",jgrapht-core-1.5.0.jar;g="org.jgrapht";a="jgrapht
+ -core";v="1.5.0",jheaps-0.13.jar;g="org.jheaps";a="jheaps";v="0.13",mig
+ layout-swing-5.2.jar;g="com.miglayout";a="miglayout-swing";v="5.2",migl
+ ayout-core-5.2.jar;g="com.miglayout";a="miglayout-core";v="5.2",aparapi
+ -2.0.0.jar;g="com.aparapi";a="aparapi";v="2.0.0",aparapi-jni-1.4.2.jar;
+ g="com.aparapi";a="aparapi-jni";v="1.4.2",bcel-6.4.1.jar;g="org.apache.
+ bcel";a="bcel";v="6.4.1",scala-library-2.13.1.jar;g="org.scala-lang";a=
+ "scala-library";v="2.13.1",commons-lang3-3.11.jar;g="org.apache.commons
+ ";a="commons-lang3";v="3.11",poi-4.1.2.jar;g="org.apache.poi";a="poi";v
+ ="4.1.2",commons-codec-1.13.jar;g="commons-codec";a="commons-codec";v="
+ 1.13",commons-collections4-4.4.jar;g="org.apache.commons";a="commons-co
+ llections4";v="4.4",commons-math3-3.6.1.jar;g="org.apache.commons";a="c
+ ommons-math3";v="3.6.1",SparseBitSet-1.2.jar;g="com.zaxxer";a="SparseBi
+ tSet";v="1.2",poi-ooxml-4.1.2.jar;g="org.apache.poi";a="poi-ooxml";v="4
+ .1.2",poi-ooxml-schemas-4.1.2.jar;g="org.apache.poi";a="poi-ooxml-schem
+ as";v="4.1.2",xmlbeans-3.1.0.jar;g="org.apache.xmlbeans";a="xmlbeans";v
+ ="3.1.0",commons-compress-1.19.jar;g="org.apache.commons";a="commons-co
+ mpress";v="1.19",curvesapi-1.06.jar;g="com.github.virtuald";a="curvesap
+ i";v="1.06"
 Import-Package: com.github.luben.zstd;resolution:=optional,com.google.co
  mmon.primitives;resolution:=optional,com.microsoft.schemas.office.power
  point;resolution:=optional,com.microsoft.schemas.office.word;resolution

@@ -1,7 +1,6 @@
 package Cytoscape.plugin.BNMatch.internal.Tasks;
 
 import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
-import Internal.Algorithms.Graph.Network.Edge;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.view.model.CyNetworkView;
@@ -15,6 +14,7 @@ import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 import org.jgrapht.alg.util.Pair;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -138,11 +138,11 @@ public class PairLayoutTask extends AbstractTask {
             }
         });
         // turn mapping edges to bold style
-        HashMap<Edge, CyEdge> map1 = AlignmentTaskData.edgeCyEdgeMap1;
-        HashMap<Edge, CyEdge> map2 = AlignmentTaskData.edgeCyEdgeMap2;
+        HashMap<DefaultWeightedEdge, CyEdge> map1 = AlignmentTaskData.edgeCyEdgeMap1;
+        HashMap<DefaultWeightedEdge, CyEdge> map2 = AlignmentTaskData.edgeCyEdgeMap2;
         AlignmentTaskData.mappingEdges.forEach(edgeEdgePair -> {
-            Edge edge1 = edgeEdgePair.getFirst();
-            Edge edge2 = edgeEdgePair.getSecond();
+            DefaultWeightedEdge edge1 = edgeEdgePair.getFirst();
+            DefaultWeightedEdge edge2 = edgeEdgePair.getSecond();
             CyEdge cyEdge1 = map1.get(edge1);
             CyEdge cyEdge2 = map2.get(edge2);
             view.getEdgeView(cyEdge1).setVisualProperty(BasicVisualLexicon.EDGE_WIDTH,

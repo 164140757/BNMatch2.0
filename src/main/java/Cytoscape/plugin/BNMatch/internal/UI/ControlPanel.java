@@ -103,8 +103,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             onlyDisplay = displayOnlyCheckBox.isSelected();
             if(onlyDisplay){
                 simMatrixLabel.setText("Your mapping result from the external file");
-                txtFileFilter = new FileNameExtensionFilter("TEXT FIle for your mapping result","txt");
-                simMatrixFileChooser.removeChoosableFileFilter(excelFileFilter);
                 simMatrixFileChooser.setFileFilter(txtFileFilter);
                 for (Component component : paramsPanel.getComponents()) {
                     component.setEnabled(false);
@@ -113,9 +111,7 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
             }
             else{
                 simMatrixLabel.setText("Similarity matrix for E-value from BLASTP:");
-                txtFileFilter = new FileNameExtensionFilter("TEXT FIle for simMat: local blastp result","txt");
-                simMatrixFileChooser.addChoosableFileFilter(excelFileFilter);
-                simMatrixFileChooser.setFileFilter(txtFileFilter);
+                simMatrixFileChooser.setFileFilter(excelFileFilter);
                 for (Component component : paramsPanel.getComponents()) {
                     component.setEnabled(true);
                 }
@@ -233,28 +229,12 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
         // fileFormat settings
         simMatrixFileChooser.addChoosableFileFilter(excelFileFilter);
         simMatrixFileChooser.addChoosableFileFilter(txtFileFilter);
-        simMatrixFileChooser.setFileFilter(excelFileFilter);
         // init dictionary
         simMatrixFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
     }
 
     private void setMax(JComboBox<?> combo) {
         combo.setMaximumSize(new Dimension(COMBOMAXLENGTH, combo.getMinimumSize().height));
-    }
-
-    private void initIDColumn(JComboBox<CyNetwork> networks, JComboBox<CyColumn> idColumns) {
-        if (networks.getItemCount() != 0) {
-            CyTable table = networks.getItemAt(0).getDefaultNetworkTable();
-            for (CyColumn column : table.getColumns()) {
-                String name = column.getNameOnly();
-                if (name.equals("SUID") || name.equals("Annotations") || name.equals("selected")) {
-                    continue;
-                }
-                idColumns.addItem(column);
-            }
-
-
-        }
     }
 
 
