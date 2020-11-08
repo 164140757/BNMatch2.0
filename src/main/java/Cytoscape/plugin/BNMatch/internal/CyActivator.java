@@ -5,7 +5,7 @@ package Cytoscape.plugin.BNMatch.internal;
  */
 
 import Cytoscape.plugin.BNMatch.internal.UI.ControlPanel;
-import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
+import Cytoscape.plugin.BNMatch.internal.util.InputsAndServices;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CytoPanelComponent;

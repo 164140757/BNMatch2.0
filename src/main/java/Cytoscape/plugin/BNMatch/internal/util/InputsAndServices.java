@@ -1,4 +1,4 @@
-package Cytoscape.plugin.BNMatch.internal.UI;
+package Cytoscape.plugin.BNMatch.internal.util;
 
 import DS.Matrix.SimMat;
 import DS.Network.UndirectedGraph;

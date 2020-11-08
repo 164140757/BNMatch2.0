@@ -1,9 +1,8 @@
 package Cytoscape.plugin.BNMatch.internal.Tasks;
 
-import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
+import Cytoscape.plugin.BNMatch.internal.util.InputsAndServices;
 import DS.Matrix.SimMat;
 import DS.Network.UndirectedGraph;
-import IO.GraphFileReader;
 import IO.MappingResultReader;
 import IO.SimMatReader;
 import org.cytoscape.model.CyNetwork;
@@ -13,7 +12,8 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.io.File;
 
-import static Cytoscape.plugin.BNMatch.internal.Tasks.HGATask.convert;
+import static Cytoscape.plugin.BNMatch.internal.util.CytoUtils.convert;
+
 
 public class HGAInputCheckTask extends AbstractTask {
     public HGAInputCheckTask() {

@@ -1,6 +1,7 @@
 package Cytoscape.plugin.BNMatch.internal.Tasks;
 
-import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
+import Cytoscape.plugin.BNMatch.internal.util.AlignmentTaskData;
+import Cytoscape.plugin.BNMatch.internal.util.InputsAndServices;
 import org.cytoscape.model.*;
 import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.work.AbstractTask;

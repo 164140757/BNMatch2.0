@@ -4,12 +4,11 @@ import Cytoscape.plugin.BNMatch.internal.Tasks.CombineNetworksTask;
 import Cytoscape.plugin.BNMatch.internal.Tasks.HGAInputCheckTask;
 import Cytoscape.plugin.BNMatch.internal.Tasks.HGATask;
 import Cytoscape.plugin.BNMatch.internal.Tasks.PairLayoutTask;
+import Cytoscape.plugin.BNMatch.internal.util.InputsAndServices;
 import net.miginfocom.swing.MigLayout;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyTable;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.cytoscape.model.events.NetworkAddedEvent;
@@ -23,7 +22,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 
-import static Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices.*;
+import static Cytoscape.plugin.BNMatch.internal.util.InputsAndServices.*;
 
 
 // Define a CytoPanel class
@@ -43,7 +42,6 @@ public class ControlPanel implements CytoPanelComponent, NetworkAddedListener, N
     private JLabel hVal;
     private JFileChooser simMatrixFileChooser;
     // parameters for HGA
-    private boolean isindexQuery;
     private JLabel simMatrixLabel;
     private JSlider hValSlider;
     private JTextField tolerance;

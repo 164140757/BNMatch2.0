@@ -1,7 +1,7 @@
 Cytoscape\plugin\BNMatch\internal\CyActivator$1.class
-Cytoscape\plugin\BNMatch\internal\UI\InputsAndServices.class
+Cytoscape\plugin\BNMatch\internal\util\AlignmentTaskData.class
 Cytoscape\plugin\BNMatch\internal\Tasks\HGAInputCheckTask.class
-Cytoscape\plugin\BNMatch\internal\Tasks\AlignmentTaskData.class
+Cytoscape\plugin\BNMatch\internal\util\InputsAndServices.class
 Cytoscape\plugin\BNMatch\internal\Tasks\CombineNetworksTask.class
 Cytoscape\plugin\BNMatch\internal\Canvas\ShapeColor.class
 Cytoscape\plugin\BNMatch\internal\CyActivator.class

@@ -10,21 +10,17 @@ package Cytoscape.plugin.BNMatch.internal.Tasks;
 
 
 import Algorithms.Graph.HGA.HGA;
-import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
+import Cytoscape.plugin.BNMatch.internal.util.AlignmentTaskData;
+import Cytoscape.plugin.BNMatch.internal.util.InputsAndServices;
 import DS.Matrix.SimMat;
 import DS.Network.UndirectedGraph;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.model.CyNode;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -87,32 +83,10 @@ public class HGATask extends AbstractTask {
         AlignmentTaskData.inverseMapping = mapInverse;
     }
 
-    private HashMap<String, Long> getNameUIDMap(CyNetwork network) {
-        HashMap<String, Long> res = new HashMap<>();
-        network.getNodeList().forEach(cyNode -> res.put(network.getRow(cyNode).get(CyNetwork.NAME, String.class), cyNode.getSUID()));
-        return res;
-    }
 
 
-    public static UndirectedGraph<String, DefaultWeightedEdge> convert(CyNetwork network) {
-        assert network != null;
-        UndirectedGraph<String, DefaultWeightedEdge> out = new UndirectedGraph<>(DefaultWeightedEdge.class);
-        Map<Long, String> nodeMap = new HashMap<>();
-        // get nodes map
-        for (CyNode cynode : network.getNodeList()) {
-            String nName = network.getRow(cynode).get(CyNetwork.NAME, String.class);
-            nodeMap.put(cynode.getSUID(), nName);
-        }
-        // add edge
-        for (CyEdge cyedge : network.getEdgeList()) {
-            String source = nodeMap.get(cyedge.getSource().getSUID());
-            String target = nodeMap.get(cyedge.getTarget().getSUID());
-            out.addVertex(source);
-            out.addVertex(target);
-            out.addEdge(source, target);
-        }
-        return out;
-    }
+
+
 
 }
 

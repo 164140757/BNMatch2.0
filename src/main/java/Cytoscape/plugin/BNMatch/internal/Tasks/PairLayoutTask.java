@@ -1,6 +1,7 @@
 package Cytoscape.plugin.BNMatch.internal.Tasks;
 
-import Cytoscape.plugin.BNMatch.internal.UI.InputsAndServices;
+import Cytoscape.plugin.BNMatch.internal.util.AlignmentTaskData;
+import Cytoscape.plugin.BNMatch.internal.util.InputsAndServices;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.view.model.CyNetworkView;
@@ -18,10 +19,8 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
-import static Cytoscape.plugin.BNMatch.internal.Canvas.ShapeColor.randomColor;
 import static Cytoscape.plugin.BNMatch.internal.Canvas.ShapeColor.randomShapeAndColor;
 import static Cytoscape.plugin.BNMatch.internal.util.CytoUtils.getCyNetworkView;
 
@@ -29,14 +28,9 @@ public class PairLayoutTask extends AbstractTask {
 
     private static final double HORIZONTAL_SCALE = 1.3;
     private static final Double WIDTH_SCALE = 3.;
-    private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
-    private CyNetworkFactory networkFactory;
     private CyNetworkViewManager viewManager;
-    private CyNetworkManager networkManager;
     private CyNetworkViewFactory viewFactory;
     private CyEventHelper eventHelper;
-    private VisualStyleFactory visualStyleFactoryServiceRef;
-    private Map<CyNode, double[]> indexPos;
 
     public PairLayoutTask() {
 
@@ -46,11 +40,11 @@ public class PairLayoutTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) {
         taskMonitor.setStatusMessage("adjusting nodes' positions...");
-        networkManager = InputsAndServices.networkManager;
+        CyNetworkManager networkManager = InputsAndServices.networkManager;
         viewFactory = InputsAndServices.networkViewFactory;
         eventHelper = InputsAndServices.eventHelper;
-        continuousMappingFactoryServiceRef = InputsAndServices.mapFactoryService;
-        networkFactory = InputsAndServices.networkFactory;
+        VisualMappingFunctionFactory continuousMappingFactoryServiceRef = InputsAndServices.mapFactoryService;
+        CyNetworkFactory networkFactory = InputsAndServices.networkFactory;
         viewManager = InputsAndServices.networkViewManager;
         //pair layout setting
         CyNetwork combinedNet = AlignmentTaskData.combinedNet;
